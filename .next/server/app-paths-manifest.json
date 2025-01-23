@@ -1,0 +1,6 @@
+{
+  "/api/fixtures/gameweek/route": "app/api/fixtures/gameweek/route.js",
+  "/page": "app/page.js",
+  "/predictions/page": "app/predictions/page.js",
+  "/user/page": "app/user/page.js"
+}

@@ -31,15 +31,15 @@ Keep the file structure as simple a clean as possible.
 
 {
   "type": "service_account",
-  "project_id": "predictionsappv4",
-  "private_key_id": "32e8da832392ed7847fe0bfccf88003dacf71d3c",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC8tjDoR64MskdD\n7VCe0+VrmzGYy2fMank5xbgXgWpuMfkho9I4L5GZ584NGQpj+5vs2b4LmnHHE3Km\nq+6j5i3Jkh4RIvsMiWE9QqBhAE6TWmxLLfPPtlqWk9zNvSYycR8ulzDjHTdWvoIR\nlJ11qylgifaqn2xYdezoXpp0TwxvcY3xDL611LGFA4TQ/RBXXB0LWIQ8e4kmKpa8\nIjAm9xG3Nu13LAET5UHLPV34E03n2QSpBqE8AmKL81VBNrv211kq52Q6wnA8p6QY\nz3lZ5j3/TiGs4fz1ndP8zDCmakBPc/fJtVzbqJF94J+EIAYY2chSeOxXK8InjxVi\n3N9miLwLAgMBAAECggEABup/GLGGfET3s1JvXyAb6y7Ts/+sYlj6mraXfGu2nKrs\nhaJCh42daUW4uaZ+c33v+npbv9gdWF2VmOx51qbjwbHps9i+Lk5F8oqjubpa/C/X\nAoWrcaQuELutiXASW3c63H3CVxMl3ozP09jIUTIrK4m9hlueYGWTVPbL8/xGU+Uw\n3wN9uUIOsaJcXgs59ZS41MF7t2a8LNtPrzcQgerZMg1IvM9ovNK37DPqgqcWU1Pm\nBpuqqm6kTUP25iWxflipKKxoK2cIOxNb5dVjYVgQAa4BNL0rr012kMMVfUk/rFSF\npcUQ/MHjGanGNie0WAfH0BJvXDsUCqIS0G4gMqr2lQKBgQDjXHx2lLddqAUmJIeh\nV3jUA7wzNeco/GFPnM/cBW0O71QRs23umbkDMgGOGf9Iv1S5Fjg5qHRpCR+T7jW4\nm51j6mza5CiKx04L8gM1jfJOo1OC97n+yXkXuAM1ubXx7iPNlnQ1VLVLjv9SHQ9g\nqL/ZKWYr68tUBvE2oIlVIBqNpwKBgQDUe2gJzcCxPz3b4s6lJcuLPUKy9E4uXEF7\n3ImEHTPFeCmeM5sW4DKGTaV38fIp9P6U9OpM/ZeGTWG+pc+T/QGgjVHR484b4F6o\n9Cg+LRyGPYw1toT6lkBItM7Z4Ri/1OtonDxm1v3OBPTkUSuzhIRSsPX2jA02HLJA\nVmW8G6MS/QKBgQC4fggRQUQ6H2luNh5I8e3+PLmu5IKbY5CjRZ/17gE9KT+SzYLb\nJqpWyXExmi7pHTjmp/0f7G3p/Zk+NQIqtzvUJBoI1TOAyZGvZ8bq4jBJV4cgs1ye\nP2aftJYGNphJpPAwl3HdBMvIcFUGkMY1rTlgQpPB+CiaGrgJl+NYzCA/6QKBgQCv\n/c78X8k8hg8scz2JmDZxC7qVErk2uP8cIlxcavuYkaCXAlNwrR3sE5/8Kw/TJLNA\nmWL/hgPdH3bYO+okvyh73NFqMW9js4F0G1bBuQepQI1DZ/vYul5gWjICUOj46thY\n+x8kZuotm/liqsCxng8jlqMDJJlEupwBog39sj5t2QKBgQDJGlcjYmq0fFIiMBMg\nfC5ebXEL84nmkOTiACcawB+Q2uxVBfhvzYLTzI8AfPvx80AYM/t2mc/vqTB7jZ/Y\n5yKfXVpFgylBRfTBlD9SHdJhSGvy+4pNknH+VGio5mLMrPgVknuly58NZC7BrFie\nmPRgTV9lrUB9NAEprEnxT7OLnA==\n-----END PRIVATE KEY-----\n",
-  "client_email": "predictionappvercel@predictionsappv4.iam.gserviceaccount.com",
-  "client_id": "113869176743417016247",
+  "project_id": "predictionsapp-new",
+  "private_key_id": "f45c87b70893a6424569f1dbb87ef12d635d9700",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCz00O6kZU717A4\nYd+qRJoKCQh+G+EbR/9PRH82nFDlaHN8R8VCgUM7qwK0O42swMuZuOUdtYBihpH9\n5CeuxXXunjNQ6pHWacrhqZvbQ+kY9fgscZB2z3RDwyGNFE/SiLVOmJ8I68/oM+9u\nDVCnExphPmbNJS6/zgkiyXGuzN4ypdDZk6ovpnrKioRp21vMVFaa0aOkhKXgo9Cp\nqrArldPsfjLgF7HMDfVaWELoMMUAd6icq8U77ml/DnMH93uTLWblUtaHIhjNCfly\nvLEnU9Co+qkHeR8BKYIf/PTTzyO4V7dIj5fC20JxSjvi8TZgFg8+ighU5mwdobUo\nFMkc4Gl5AgMBAAECggEAFfIi5kRhYjTh2ZWvQFZANtiQn+Ra4fOUz9mYDWQBFug7\nDNgs9Z91IzVs/m40rXg3eM6Y7pnhndSWwVWcdq68RGdr85R3ASP22bizb8xfSJev\nJoxjAS7y/ViVcgRgM/1RZDLJ2OK/hDL/Zc7L8KHrEqJVFTT0Gj4kvQk43ah8txEy\n+jS9AtDHKtAOhzE/66E8DFWYVdENbiVb9lbp/Rq94+ZpZ7X0wXD++RnPhQAwEQIZ\nB8CGUFiwLR3/jDntH3r7VzhD1CQF7PXIexSp5eMg5mfChR7qlQEL8pk99V6/dglg\nJ0GYn6ocbslFjQ7dMvhw7H+pVDrzwJ5xplf1XZV0sQKBgQDxcEIlN1tzQ5+UHP8B\nE3YyGkkxDoI9nYpRdpIAy7xQ4twMgmbhdbViMqo/im2v2vFkHUZ8ptnhgsZs0zXr\nofRASmnNbfVlRQfnaTTme9ySN/vaG0acurwqujoSscCegtay6Zo5nxsasQXFmhNA\ny/iuXLXwZHTloJ3HAULVIE3zMQKBgQC+q7cQc+7M4umA4M55u7cn32cUDwNra6XY\np3nE8WBbCzEteMLvZVZjmMToGxyeEHx99sMJD0C1dVcTEeWSUFaTTuKVoFS+mz3u\nLVuzuAIE7URxaJanY+4Onqsk2V110wSjSbeuXbmEw54f0FZmN+BsbUEi9xytkjvq\nMIPS9iX4yQKBgQCH+ByIMQDDjRXVp+7EgF1UIhGOGwmmAY7gCdJ3uEU5mEksklO2\nLUAVKUtPtXnIS5keNI55rM2PfsKYjuoS5YZUnpOvKXnFqnalEE7GboLtpbGkRzAh\nG9jUh0QlOw2rNywKXhyIzt3IzmDdw8OL/lLyfyvHUguzNh0k8cTdme/MQQKBgQCt\nrJ13+BGpQHrusFaCXbDMOdqbU72KqCgNeycYc8CPzVcDEz+EbarN14Zr4N4lP+EV\nn6Ixa1pGrtYcga25o0Hote7/2WW3pJI5k8k2n0H/mNtB7cFkQUrCuFYtn2xY+Vf9\nIBWWVrq4KrKqScuZGgZq3O162tmdZFj8zSoWC620uQKBgQDtuHAiOBDi1BE9Rnvv\nXQrSWabnkNkXpxeOW2GC2k7oxyiZOSita4wfYtHe3+2Q4QmlUECHpp4Kt9PGsjsP\nfCv0yIQf2tDwjYTq/r6/CZRh81yld59Jb/SVDW3e2OlRSfFc0+S+Y6yCicvBe5UG\n7YPHhrIjdXLszHfr6BzZLNuBfQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "predictionsapp@predictionsapp-new.iam.gserviceaccount.com",
+  "client_id": "103822356126711101434",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/predictionappvercel%40predictionsappv4.iam.gserviceaccount.com",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/predictionsapp%40predictionsapp-new.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 }
 
@@ -81,7 +81,7 @@ Implement Dotenv file logic so it can be deployed in a production environment
       }
     ]
     ```
-## 1.2 Store the Fixtures in the GoogleSheet “Fixtures” Table
+## 1.2 Store the Fixtures in the GoogleSheet "Fixtures" Table
 The process for storing fixtures in Airtable follows these steps:
 
 1.2.1. Clear existing data:
@@ -134,16 +134,16 @@ Table = predictions
 -They will predict the number of goals the home team and the away team will score.
 -The user will use the predictions page to submit predictions for the score of all fixtures in the next game week
 -A game week is also known as round.
-- when the user clicks on the submit button the data is sent to the Googelsheets “Predictions” table.
+- when the user clicks on the submit button the data is sent to the Googelsheets "Predictions" table.
 - the column headers are username,fixtureid, home team, away team, home team score, away team score, round
--These predictions will be stores in the googlesheets “predictions’ Table
+-These predictions will be stores in the googlesheets "predictions' Table
 -When the user enters a single numeric character into the input field for a score it will automatically move to the next input field for a score.
 -If a user has already submitted predictions for a specific round they will not be able to submit predictions for the same round again.
 -If a user has not entered in a score in each field it will not allow them to submit the prediction.
 
 ##1.5 Leaderboard
-The leaderboard shows the data in the googelsheets “leaderboard” table
-It will display record in order of “rank” with lowest number at the top of the table.
+The leaderboard shows the data in the googelsheets "leaderboard" table
+It will display record in order of "rank" with lowest number at the top of the table.
 
 —
 # 2.UX and Front end
@@ -157,7 +157,7 @@ It will display record in order of “rank” with lowest number at the top of t
   ### 2.1.1 User Page
   - the function of this page is to allow the user to select their name from a number of icons displaying one for each name of the players.
   - this will represent to player that the user is predicting for.
-- it will include a “Back’ button that the user can use to return to the home page
+- it will include a "Back' button that the user can use to return to the home page
   - there are currently 6 players in the database.
   - the users names are:
     -"David"
@@ -170,18 +170,18 @@ It will display record in order of “rank” with lowest number at the top of t
 ## 2.3 Enter Predictions
 The logic for this screen will be run everytime the screen loads. 
 -Users can enter predictions for all matches in the next round only.
-- **Definition of next round**:
-- the round of a match is indicated by the “round’ column.
-  - The next round  is the lowest number where every match with that number in the  round field has a status: `NS`.
-- **Constraints**:
-  - Predictions cannot be entered for game weeks that have already started.The earliest date of a match of that round ,must not be in the past.
-  - Matches data will be fetched from the fixtures table via the Airtable API.
+- The fixtures to be displayed are loaded from the "GameWeek" sheet in googlesheets document.
+- this sheet should be refreshed everytime before the data is loaded into the application.
+
+  - Matches data will be fetched from the fixtures table via the googlesheets API.
 **Layout**
-- the screen should contain a “change user” button in the top right of the screen
+- the screen should contain a "change user" button in the top right of the screen
   - the user name will displayed in the top left of the screen.
-  - it will display the home team on the left and the away team on the right with two blanks field in the middle
+  - it will display the home team on the left and the away team on the right with two blank numeric input fields in the middle
   - the user will be able to click on the blank field to enter their prediction.
-  - when the user input a single character numeric value into the first blank field, it will move onto the next blank field.
+  - when the user input a single character numeric value into the first blank field, it will move onto the next blank field.-
+  - once all the fields are filled the user will be able to click on the submit button to submit their predictions.
+  
 
   ###2.3.1 Submit Predictions
   - the user will be able to click on the submit button to submit their predictions.
@@ -207,7 +207,7 @@ The logic for this screen will be run everytime the screen loads.
 ###2.5.1.1 Layout
  - the leaderboard should follow the same design language and color scheme as the rest of the application.
  - the leaderboard should be responsive and should look good on both laptop and mobile devices.
- - it should contain a “Back” button in the top left of the screen that the user can use to return to the home page.  
+ - it should contain a "Back" button in the top left of the screen that the user can use to return to the home page.  
 
  ###2.5.1.2 Table
  - the top frame should be titled "Leaderboard"
@@ -217,7 +217,7 @@ The logic for this screen will be run everytime the screen loads.
       - Total Points
       - Points from the previous game week
   - the table should be sorted by total points, highest to lowest.
-- data to populate this table will come from googlesheets “leaderBoard” sheet.
+- data to populate this table will come from googlesheets "leaderBoard" sheet.
 
 # 3. Project Setup and Best Practices
 

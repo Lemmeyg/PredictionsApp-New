@@ -1,6 +1,6 @@
 import { fetchFixtures } from '../src/lib/api/football';
 import { updateFixturesInGoogleSheets } from '../src/lib/api/sheets';
-
+// this script will import data from the football api and update the google sheets
 async function updateFixtures() {
   try {
     console.log('Starting daily fixture update...');
