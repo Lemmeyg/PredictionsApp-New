@@ -186,15 +186,17 @@ The logic for this screen will be run everytime the screen loads.
   ###2.3.1 Submit Predictions
   - the user will be able to click on the submit button to submit their predictions.
   - when they submit their predictions they will be shown a toast notification containing all their predictions in one message so they can take a screen shot.
-  - all predictions will be stored in the same airtable database as the fixtures, on a table titled "predictions". 
+  - display teh toast notice for 3 seconds before returning the user to the home page.
+  - all predictions will be stored in the same googlesheets workbook as the fixtures, on a table titled "predictions". 
   - the predictions table will have the following columns:
     - userName: name of user
     - fixtureId: unique identifier matching the fixtureId in the fixtures table
     - homeTeam: name of home team
     - awayTeam: name of away team
+    - homeTeamScore: predicted score of home team
+    - awayTeamScore: predicted score of away team
     - round: match round number
-    - homeTeamScore: current/final score (if available)
-    - awayTeamScore: current/final score (if available)
+    -date
   - note that there are other columns in the table but these are the ones that are to be updated. ignore the existing columns.
   - never write over any existing rows.
 

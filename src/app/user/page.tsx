@@ -1,66 +1,32 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
-const users = [
-  "David",
-  "Gordon",
-  "Huw",
-  "James",
-  "Tom",
-  "Ty"
-]
+const USERS = ["David", "Gordon", "Huw", "James", "Tom", "Ty"]
 
-export default function UserSelectionPage() {
-  const router = useRouter()
-  const [selectedUser, setSelectedUser] = useState<string>('')
-
-  // Load previously selected user if exists
-  useEffect(() => {
-    const savedUser = localStorage.getItem('selectedUser')
-    if (savedUser) setSelectedUser(savedUser)
-  }, [])
-
-  const handleUserSelect = (user: string) => {
-    setSelectedUser(user)
-    localStorage.setItem('selectedUser', user)
-    router.push('/predictions')
-  }
-
+export default function UserPage() {
   return (
-    <main className="min-h-screen p-4">
-      <div className="mb-6">
-        <Link href="/">
-          <Button variant="ghost" className="hover:bg-slate-100">
-            ← Back
-          </Button>
+    <div className="container mx-auto p-4">
+      <div className="flex flex-col items-center gap-6">
+        <h1 className="text-2xl font-bold">Select User</h1>
+        
+        <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
+          {USERS.map((user) => (
+            <Link 
+              key={user} 
+              href={`/predictions?userName=${user}`}
+              className="w-full"
+            >
+              <Button className="w-full">{user}</Button>
+            </Link>
+          ))}
+        </div>
+
+        <Link href="/" className="mt-4">
+          <Button variant="outline">Back</Button>
         </Link>
       </div>
-
-      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-        {users.map((user) => (
-          <Card 
-            key={user}
-            className="p-0 overflow-hidden"
-          >
-            <Button
-              variant="ghost"
-              className={`w-full h-24 text-lg transition-colors
-                ${selectedUser === user 
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                  : 'hover:bg-slate-100'
-                }`}
-              onClick={() => handleUserSelect(user)}
-            >
-              {user}
-            </Button>
-          </Card>
-        ))}
-      </div>
-    </main>
+    </div>
   )
 } 

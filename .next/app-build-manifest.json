@@ -24,6 +24,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/fixtures/gameweek/route.js"
+    ],
+    "/api/predictions/submit/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/predictions/submit/route.js"
     ]
   }
 }

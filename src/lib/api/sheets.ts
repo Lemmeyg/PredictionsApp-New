@@ -17,9 +17,17 @@ console.log('Environment variables loaded:', {
 });
 
 // Verify environment variables are loaded
-function verifyEnvVariables() {
-  const required = ['GOOGLE_CLIENT_EMAIL', 'GOOGLE_PRIVATE_KEY'];
-  const missing = required.filter(key => !process.env[key]);
+export function verifyEnvVariables() {
+  const required = {
+    GOOGLE_SHEETS_ID: process.env.GOOGLE_SHEETS_ID,
+    GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+    GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+  };
+
+  const missing = Object.entries(required)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
@@ -127,7 +135,7 @@ export async function getGameWeekFixtures() {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'GameWeek!A:F', // Get columns A through F to include fixture ID (A), home team (E), away team (F)
+      range: 'GameWeek!A:F',
     })
 
     const rows = response.data.values
@@ -138,16 +146,20 @@ export async function getGameWeekFixtures() {
 
     // Skip header row and map only rows with valid data
     return rows
-      .slice(1) // Skip header row
-      .filter(row => row[0] && row[4] && row[5]) // Check for ID (A), home team (E), and away team (F)
+      .slice(1)
+      .filter(row => row[0] && row[4] && row[5])
       .map(row => ({
         id: row[0],
-        homeTeam: row[4].trim(), // Column E for home team
-        awayTeam: row[5].trim()  // Column F for away team
+        homeTeam: row[4].trim(),
+        awayTeam: row[5].trim()
       }))
 
   } catch (error) {
-    console.error('Error fetching fixtures from Google Sheets:', error)
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      config: error.config
+    })
     throw error
   }
 } 

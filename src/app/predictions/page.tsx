@@ -40,11 +40,24 @@ export default function PredictionsPage() {
   const fetchFixtures = async () => {
     console.log('Fetching fixtures...')
     try {
-      const response = await fetch('/api/fixtures/gameweek')
-      console.log('API Response:', response)
+      console.log('Starting fetch request...')
       
-      if (!response.ok) throw new Error('Failed to fetch fixtures')
+      const response = await fetch('/api/fixtures/gameweek', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       
+      console.log('API Response status:', response.status)
+      console.log('API Response ok:', response.ok)
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('Error details:', errorData)
+        throw new Error(`Failed to fetch fixtures: ${response.status}`)
+      }
+
       const data = await response.json()
       console.log('Fixtures data:', data)
       
@@ -80,16 +93,57 @@ export default function PredictionsPage() {
     )
   }
 
-  const handleSubmit = () => {
-    toast({
-      title: "Predictions Submitted",
-      description: fixtures.map(fixture => 
-        `${fixture.homeTeam} ${predictions[fixture.id]?.home} - ${predictions[fixture.id]?.away} ${fixture.awayTeam}`
-      ).join('\n'),
-      duration: 3000,
-    })
-    router.push('/')
-  }
+  const handleSubmit = async () => {
+    try {
+      // Format predictions for submission
+      const predictionsData = fixtures.map(fixture => ({
+        userName: username,
+        fixtureId: fixture.id,
+        homeTeam: fixture.homeTeam,
+        awayTeam: fixture.awayTeam,
+        homeScore: predictions[fixture.id]?.home,
+        awayScore: predictions[fixture.id]?.away,
+        submittedAt: new Date().toISOString()
+      }));
+
+      console.log('Submitting predictions:', predictionsData);
+
+      const response = await fetch('/api/predictions/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ predictions: predictionsData }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to submit predictions');
+      }
+
+      // Show success toast
+      toast({
+        title: "Predictions Submitted",
+        description: fixtures.map(fixture => 
+          `${fixture.homeTeam} ${predictions[fixture.id]?.home} - ${predictions[fixture.id]?.away} ${fixture.awayTeam}`
+        ).join('\n'),
+        duration: 3000,
+      });
+
+      // Redirect after successful submission
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error submitting predictions:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to submit predictions",
+        variant: "destructive",
+      });
+    }
+  };
 
   console.log('Rendering with state:', { isLoading, fixtures, username })
 
