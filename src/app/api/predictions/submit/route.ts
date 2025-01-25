@@ -46,10 +46,11 @@ export async function POST(request: Request) {
       pred.awayTeam,
       pred.homeScore,
       pred.awayScore,
+      pred.round,
       pred.submittedAt
     ]);
 
-    console.log('Submitting rows to sheet:', rows);
+    console.log('Formatted rows:', rows);
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEETS_ID,

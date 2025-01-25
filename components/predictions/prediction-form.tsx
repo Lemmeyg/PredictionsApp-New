@@ -1,17 +1,64 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { submitPredictions } from '@/app/actions/submit-predictions';
 import { useRouter } from 'next/navigation';
 
-export function PredictionForm({ fixtures, userName }: PredictionFormProps) {
+interface Props {
+  fixtures: {
+    fixtureId: number;
+    homeTeam: string;
+    awayTeam: string;
+    round: number;
+  }[];
+  userName: string;
+}
+
+export function PredictionForm({ fixtures, userName }: Props) {
   const { toast } = useToast();
   const router = useRouter();
   const [scores, setScores] = useState<Record<number, { home: string; away: string }>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Create refs for all input fields
+  const inputRefs = useRef<Record<string, HTMLInputElement>>({});
+
+  const handleInputChange = (
+    fixtureId: number, 
+    team: 'home' | 'away', 
+    value: string,
+    currentIndex: number
+  ) => {
+    // Only allow numbers
+    if (value && !/^\d+$/.test(value)) return;
+
+    // Update scores
+    setScores(prev => ({
+      ...prev,
+      [fixtureId]: {
+        ...prev[fixtureId],
+        [team]: value
+      }
+    }));
+
+    // If a single digit is entered, move to next input
+    if (value.length === 1) {
+      const nextIndex = currentIndex + 1;
+      const totalInputs = fixtures.length * 2;
+      
+      if (nextIndex < totalInputs) {
+        const nextFixtureIndex = Math.floor(nextIndex / 2);
+        const isNextHome = nextIndex % 2 === 0;
+        const nextFixture = fixtures[nextFixtureIndex];
+        const nextId = `${nextFixture.fixtureId}-${isNextHome ? 'home' : 'away'}`;
+        
+        inputRefs.current[nextId]?.focus();
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,5 +128,56 @@ export function PredictionForm({ fixtures, userName }: PredictionFormProps) {
     }
   };
 
-  // ... rest of the component code remains the same ...
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {fixtures.map((fixture, index) => (
+        <div key={fixture.fixtureId} className="grid grid-cols-[1fr,auto,auto,1fr] items-center gap-2">
+          <div className="text-right text-sm text-amber-500">{fixture.homeTeam}</div>
+          <Input
+            ref={el => {
+              if (el) inputRefs.current[`${fixture.fixtureId}-home`] = el;
+            }}
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
+            maxLength={1}
+            className="w-12 text-center"
+            value={scores[fixture.fixtureId]?.home || ''}
+            onChange={(e) => handleInputChange(
+              fixture.fixtureId, 
+              'home', 
+              e.target.value,
+              index * 2
+            )}
+          />
+          <Input
+            ref={el => {
+              if (el) inputRefs.current[`${fixture.fixtureId}-away`] = el;
+            }}
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
+            maxLength={1}
+            className="w-12 text-center"
+            value={scores[fixture.fixtureId]?.away || ''}
+            onChange={(e) => handleInputChange(
+              fixture.fixtureId, 
+              'away', 
+              e.target.value,
+              index * 2 + 1
+            )}
+          />
+          <div className="text-sm text-amber-500">{fixture.awayTeam}</div>
+        </div>
+      ))}
+      
+      <Button 
+        type="submit" 
+        className="w-full bg-amber-500 text-white"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Submitting...' : 'Submit Predictions'}
+      </Button>
+    </form>
+  );
 } 

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import Link from 'next/link'
 
 interface Fixture {
@@ -165,47 +165,50 @@ export default function PredictionsPage() {
         </h1>
         <p className="text-gray-400 mb-8">Predict scores for the upcoming matches</p>
 
-        <div className="space-y-8">
-          {fixtures && fixtures.length > 0 ? (
-            fixtures.map((fixture, index) => (
-              <div key={fixture.id} className="flex items-center">
-                <div className="w-36 text-right">
-                  <span className="text-white">{fixture.homeTeam}</span>
-                </div>
-                <div className="flex items-center gap-2 mx-4">
-                  <Input
-                    ref={el => inputRefs.current[index * 2] = el}
-                    className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-                    value={predictions[fixture.id]?.home || ''}
-                    onChange={(e) => handleScoreChange(fixture.id, 'home', e.target.value, index * 2)}
-                  />
-                  <span className="text-gray-400 mx-1">-</span>
-                  <Input
-                    ref={el => inputRefs.current[index * 2 + 1] = el}
-                    className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-                    value={predictions[fixture.id]?.away || ''}
-                    onChange={(e) => handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)}
-                  />
-                </div>
-                <div className="w-36">
-                  <span className="text-white">{fixture.awayTeam}</span>
-                </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {fixtures.map((fixture, index) => (
+            <div key={fixture.id} className="flex items-center">
+              <div className="w-36 text-right">
+                <span className="text-white">{fixture.homeTeam}</span>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-400">No fixtures available</p>
+              <div className="flex items-center gap-2 mx-4">
+                <Input
+                  ref={(el) => {
+                    if (el) {
+                      inputRefs.current[index * 2] = el;
+                    }
+                  }}
+                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  value={predictions[fixture.id]?.home || ''}
+                  onChange={(e) => handleScoreChange(fixture.id, 'home', e.target.value, index * 2)}
+                />
+                <span className="text-gray-400 mx-1">-</span>
+                <Input
+                  ref={(el) => {
+                    if (el) {
+                      inputRefs.current[index * 2 + 1] = el;
+                    }
+                  }}
+                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  value={predictions[fixture.id]?.away || ''}
+                  onChange={(e) => handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)}
+                />
+              </div>
+              <div className="w-36">
+                <span className="text-white">{fixture.awayTeam}</span>
+              </div>
+            </div>
+          ))}
+          {fixtures.length > 0 && (
+            <Button 
+              className="w-full mt-8 bg-[#ffa500] hover:bg-[#ffa500]/90" 
+              disabled={!isFormComplete()}
+              onClick={handleSubmit}
+            >
+              Submit Predictions
+            </Button>
           )}
-        </div>
-
-        {fixtures.length > 0 && (
-          <Button 
-            className="w-full mt-8 bg-[#ffa500] hover:bg-[#ffa500]/90" 
-            disabled={!isFormComplete()}
-            onClick={handleSubmit}
-          >
-            Submit Predictions
-          </Button>
-        )}
+        </form>
       </div>
     </main>
   )

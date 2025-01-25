@@ -3,6 +3,19 @@
 import { google } from 'googleapis';
 import { getGoogleSheetsAuth } from '@/lib/google-sheets';
 
+// Add the interface definition
+interface PredictionSubmission {
+  userName: string;
+  predictions: {
+    fixtureId: number;
+    homeTeam: string;
+    awayTeam: string;
+    homeTeamScore: number;
+    awayTeamScore: number;
+    round: number;
+  }[];
+}
+
 export async function submitPredictions({ userName, predictions }: PredictionSubmission) {
   try {
     console.log('Starting prediction submission for:', userName);

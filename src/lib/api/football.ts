@@ -2,6 +2,25 @@ import axios from 'axios';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 
+// Define the Fixture interface
+interface Fixture {
+  id: number;
+  date: string;
+  startTime: string;
+  round: number;
+  homeTeam: {
+    id: number;
+    name: string;
+  };
+  awayTeam: {
+    id: number;
+    name: string;
+  };
+  status: string;
+  homeScore: number | string;
+  awayScore: number | string;
+}
+
 // Load environment variables from .env.local
 config({ path: resolve(process.cwd(), '.env.local') });
 
