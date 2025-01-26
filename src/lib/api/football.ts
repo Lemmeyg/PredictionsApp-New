@@ -2,8 +2,8 @@ import axios from 'axios';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 
-// Define the Fixture interface
-interface Fixture {
+// Export the Fixture interface
+export interface Fixture {
   id: number;
   date: string;
   startTime: string;
@@ -51,7 +51,7 @@ export async function fetchFixtures(): Promise<Fixture[]> {
       season: SEASON,
     });
     
-    const response = await footballApiClient.get<FootballAPIResponse>('/fixtures', {
+    const response = await footballApiClient.get('/fixtures', {
       params: {
         league: PREMIER_LEAGUE_ID,
         season: SEASON,
@@ -96,7 +96,7 @@ export async function fetchFixtures(): Promise<Fixture[]> {
     console.log(`Transformed ${fixtures.length} fixtures`);
     return fixtures;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in fetchFixtures:', error);
     return [];
   }

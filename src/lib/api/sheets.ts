@@ -2,12 +2,12 @@ import { google } from 'googleapis';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { JWT } from 'google-auth-library';
+import type { Fixture } from './football';  // Add 'type' to import only the type
 
 // Load environment variables from .env.local
 config({ path: resolve(process.cwd(), '.env.local') });
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_ID;
-const SHEET_ID = '2008750902';
 const SHEET_NAME = 'Fixtures';
 
 // Debug environment variables
@@ -25,7 +25,7 @@ export function verifyEnvVariables() {
   };
 
   const missing = Object.entries(required)
-    .filter(([_, value]) => !value)
+    .filter(([, value]) => !value)
     .map(([key]) => key);
 
   if (missing.length > 0) {

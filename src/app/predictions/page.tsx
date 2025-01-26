@@ -1,11 +1,11 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
-import Link from 'next/link'
+
 
 interface Fixture {
   homeTeam: string
@@ -22,22 +22,7 @@ export default function PredictionsPage() {
   const [username, setUsername] = useState<string>('')
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
-  useEffect(() => {
-    console.log('Component mounted')
-    const savedUser = localStorage.getItem('selectedUser')
-    console.log('Saved user:', savedUser)
-    
-    if (!savedUser) {
-      console.log('No user found, redirecting to /user')
-      router.push('/user')
-      return
-    }
-    
-    setUsername(savedUser)
-    fetchFixtures()
-  }, [])
-
-  const fetchFixtures = async () => {
+  const fetchFixtures = useCallback(async () => {
     console.log('Fetching fixtures...')
     try {
       console.log('Starting fetch request...')
@@ -72,16 +57,51 @@ export default function PredictionsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [toast])
+
+  useEffect(() => {
+    console.log('Component mounted')
+    const savedUser = localStorage.getItem('selectedUser')
+    console.log('Saved user:', savedUser)
+    
+    if (!savedUser) {
+      console.log('No user found, redirecting to /user')
+      router.push('/user')
+      return
+    }
+    
+    setUsername(savedUser)
+    fetchFixtures()
+  }, [router, fetchFixtures])
 
   const handleScoreChange = (fixtureId: string, type: 'home' | 'away', value: string, currentIndex: number) => {
-    setPredictions(prev => ({
-      ...prev,
-      [fixtureId]: {
-        ...prev[fixtureId],
-        [type]: value
+    // Only allow single numeric digits
+    if (value === '' || /^[0-9]$/.test(value)) {
+      setPredictions(prev => ({
+        ...prev,
+        [fixtureId]: {
+          ...prev[fixtureId],
+          [type]: value
+        }
+      }))
+
+      // If a digit was entered (not empty), move to next input
+      if (value !== '') {
+        let nextIndex;
+        if (type === 'home') {
+          // If it's a home score, move to the away score (right field)
+          nextIndex = currentIndex + 1;
+        } else {
+          // If it's an away score, move to the home score of next fixture (left field of next row)
+          nextIndex = currentIndex + 1;
+        }
+        
+        // Focus next input if it exists
+        if (inputRefs.current[nextIndex]) {
+          inputRefs.current[nextIndex]?.focus();
+        }
       }
-    }))
+    }
   }
 
   const isFormComplete = () => {
@@ -93,9 +113,10 @@ export default function PredictionsPage() {
     )
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent double submission
+    
     try {
-      // Format predictions for submission
       const predictionsData = fixtures.map(fixture => ({
         userName: username,
         fixtureId: fixture.id,
