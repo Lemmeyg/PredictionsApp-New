@@ -1,66 +1,25 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/app/_not-found/page-427996f02164634d.js"
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
     ],
     "/layout": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/css/1e6b3c6bf60dd73a.css",
-      "static/chunks/365-af06ef82e04b3409.js",
-      "static/chunks/172-7240a4ba995d175f.js",
-      "static/chunks/app/layout-adbb7511db0ecd78.js"
-    ],
-    "/api/fixtures/gameweek/route": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/app/api/fixtures/gameweek/route-11e896b43b70fe21.js"
-    ],
-    "/api/predictions/submit/route": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/app/api/predictions/submit/route-f0d3e5ff7beeb946.js"
-    ],
-    "/api/update-fixtures/route": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/app/api/update-fixtures/route-d64cccaedbd9a535.js"
-    ],
-    "/page": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/365-af06ef82e04b3409.js",
-      "static/chunks/app/page-54980392391a49f7.js"
-    ],
-    "/predictions/page": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/365-af06ef82e04b3409.js",
-      "static/chunks/app/predictions/page-d0f9fa45c6be3a2b.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
     "/user/page": [
-      "static/chunks/webpack-2e251052947f3362.js",
-      "static/chunks/4bd1b696-9436bbc87b66658d.js",
-      "static/chunks/517-0033f0b183a42d3c.js",
-      "static/chunks/main-app-7821ad9bee3863e2.js",
-      "static/chunks/365-af06ef82e04b3409.js",
-      "static/chunks/app/user/page-43b85a1fc709d747.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/user/page.js"
+    ],
+    "/predictions/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/predictions/page.js"
     ]
   }
 }

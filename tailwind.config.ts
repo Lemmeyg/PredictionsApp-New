@@ -3,18 +3,18 @@ import type { Config } from "tailwindcss"
 const config: Config = {
   darkMode: "class",
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   prefix: "",
   theme: {
     extend: {
       colors: {
-        background: "black",
-        card: "#1E1E1E",
-        primary: "#F59E0B",
+        background: "#0A0A0A",
+        panel: "#1A1D1F",
+        accent: "#FF6B00",
+        muted: "#6C7275",
       },
     },
   },

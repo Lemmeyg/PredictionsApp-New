@@ -9,36 +9,37 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-black flex items-center justify-center px-4 py-8">
-      <Card className="w-full max-w-[380px] bg-[#1E1E1E] border-[#2D2D2D] p-6 md:p-8">
-        <div className="flex flex-col items-center gap-8">
+    <main className="min-h-[100dvh] flex items-center justify-center p-4">
+      <Card className="w-full max-w-[min(90vw,380px)] border-border">
+        <div className="flex flex-col items-center gap-6 p-6">
           {/* Trophy Icon */}
-          <div className="bg-amber-500 p-4 rounded-full">
-            <Trophy className="w-8 h-8 text-white" />
+          <div className="bg-primary rounded-full p-4">
+            <Trophy className="h-8 w-8 text-primary-foreground" />
           </div>
 
           {/* Welcome Text */}
-          <div className="text-center space-y-3">
-            <h1 className="text-2xl font-semibold text-white">
-              Welcome to <span className="text-amber-500">Predictions</span>
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-semibold text-foreground">
+              Welcome to <span className="text-primary">Predictions</span>
             </h1>
-            <p className="text-amber-500 text-sm md:text-base">
+            <p className="text-primary text-sm md:text-base">
               Make your predictions for upcoming matches
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="w-full space-y-4">
+          <div className="w-full space-y-3">
             <Button
               onClick={() => router.push("/user")}
-              className="w-full bg-[#2D2D2D] hover:bg-[#3D3D3D] text-amber-500 border-none h-12"
+              className="w-full h-11"
+              variant="secondary"
             >
               Make Predictions
             </Button>
             <Button
               onClick={() => router.push("/leaderboard")}
-              variant="outline"
-              className="w-full border-[#2D2D2D] hover:bg-[#3D3D3D] text-amber-500 h-12"
+              className="w-full h-11"
+              variant="secondary"
             >
               View Leaderboard
             </Button>
