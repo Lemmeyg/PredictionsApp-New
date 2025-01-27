@@ -1,4 +1,7 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/predictions/page": "app/predictions/page.js"
+  "/predictions/page": "app/predictions/page.js",
+  "/api/fixtures/gameweek/route": "app/api/fixtures/gameweek/route.js",
+  "/api/predictions/submit/route": "app/api/predictions/submit/route.js"
 }

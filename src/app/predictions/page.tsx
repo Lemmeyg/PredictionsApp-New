@@ -1,110 +1,236 @@
 'use client'
 
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Card } from "@/components/ui/card"
+import { useRouter } from 'next/navigation'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
-import { PredictionForm } from "@/components/predictions/prediction-form"
-import { useEffect, useState } from 'react'
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/use-toast"
+
+
+interface Fixture {
+  homeTeam: string
+  awayTeam: string
+  id: string
+}
 
 export default function PredictionsPage() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const userName = searchParams.get('userName')
-  const [fixtures, setFixtures] = useState([])
+  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [fixtures, setFixtures] = useState<Fixture[]>([])
+  const [predictions, setPredictions] = useState<Record<string, { home: string, away: string }>>({})
+  const [username, setUsername] = useState<string>('')
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  const fetchFixtures = useCallback(async () => {
+    console.log('Fetching fixtures...')
+    try {
+      console.log('Starting fetch request...')
+      
+      const response = await fetch('/api/fixtures/gameweek', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      
+      console.log('API Response status:', response.status)
+      console.log('API Response ok:', response.ok)
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('Error details:', errorData)
+        throw new Error(`Failed to fetch fixtures: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log('Fixtures data:', data)
+      
+      setFixtures(data)
+    } catch (error) {
+      console.error('Error fetching fixtures:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load fixtures. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }, [toast])
 
   useEffect(() => {
-    if (!userName) {
-      console.log('No username found, redirecting to user selection')
+    console.log('Component mounted')
+    const savedUser = localStorage.getItem('selectedUser')
+    console.log('Saved user:', savedUser)
+    
+    if (!savedUser) {
+      console.log('No user found, redirecting to /user')
       router.push('/user')
       return
     }
     
-    const fetchFixtures = async () => {
-      try {
-        const response = await fetch('/api/fixtures/gameweek')
-        if (!response.ok) {
-          throw new Error('Failed to fetch fixtures')
+    setUsername(savedUser)
+    fetchFixtures()
+  }, [router, fetchFixtures])
+
+  const handleScoreChange = (fixtureId: string, type: 'home' | 'away', value: string, currentIndex: number) => {
+    // Only allow single numeric digits
+    if (value === '' || /^[0-9]$/.test(value)) {
+      setPredictions(prev => ({
+        ...prev,
+        [fixtureId]: {
+          ...prev[fixtureId],
+          [type]: value
         }
-        const data = await response.json()
-        setFixtures(data)
-      } catch (err) {
-        console.error('Error fetching fixtures:', err)
-        setError('Failed to load fixtures')
-      } finally {
-        setIsLoading(false)
+      }))
+
+      // If a digit was entered (not empty), move to next input
+      if (value !== '') {
+        let nextIndex;
+        if (type === 'home') {
+          // If it's a home score, move to the away score (right field)
+          nextIndex = currentIndex + 1;
+        } else {
+          // If it's an away score, move to the home score of next fixture (left field of next row)
+          nextIndex = currentIndex + 1;
+        }
+        
+        // Focus next input if it exists
+        if (inputRefs.current[nextIndex]) {
+          inputRefs.current[nextIndex]?.focus();
+        }
       }
     }
+  }
 
-    fetchFixtures()
-  }, [userName, router])
-
-  if (!userName) return null
-  
-  if (isLoading) {
-    return (
-      <main className="min-h-[100dvh] flex items-center justify-center p-4">
-        <Card className="w-full max-w-[min(90vw,380px)] border-border">
-          <div className="flex flex-col items-center gap-6 p-6">
-            <p>Loading fixtures...</p>
-          </div>
-        </Card>
-      </main>
+  const isFormComplete = () => {
+    return fixtures.every(fixture => 
+      predictions[fixture.id]?.home !== undefined && 
+      predictions[fixture.id]?.home !== '' &&
+      predictions[fixture.id]?.away !== undefined &&
+      predictions[fixture.id]?.away !== ''
     )
   }
 
-  if (error) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent double submission
+    
+    try {
+      const predictionsData = fixtures.map(fixture => ({
+        userName: username,
+        fixtureId: fixture.id,
+        homeTeam: fixture.homeTeam,
+        awayTeam: fixture.awayTeam,
+        homeScore: predictions[fixture.id]?.home,
+        awayScore: predictions[fixture.id]?.away,
+        submittedAt: new Date().toISOString()
+      }));
+
+      console.log('Submitting predictions:', predictionsData);
+
+      const response = await fetch('/api/predictions/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ predictions: predictionsData }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to submit predictions');
+      }
+
+      // Show success toast
+      toast({
+        title: "Predictions Submitted",
+        description: fixtures.map(fixture => 
+          `${fixture.homeTeam} ${predictions[fixture.id]?.home} - ${predictions[fixture.id]?.away} ${fixture.awayTeam}`
+        ).join('\n'),
+        duration: 3000,
+      });
+
+      // Redirect after successful submission
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error submitting predictions:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to submit predictions",
+        variant: "destructive",
+      });
+    }
+  };
+
+  console.log('Rendering with state:', { isLoading, fixtures, username })
+
+  if (isLoading) {
     return (
-      <main className="min-h-[100dvh] flex items-center justify-center p-4">
-        <Card className="w-full max-w-[min(90vw,380px)] border-border">
-          <div className="flex flex-col items-center gap-6 p-6">
-            <p className="text-destructive">{error}</p>
-            <Button 
-              variant="secondary"
-              className="w-full h-11"
-              onClick={() => router.push('/user')}
-            >
-              Back to Users
-            </Button>
-          </div>
-        </Card>
+      <main className="min-h-screen bg-[#1a1f2e] text-white p-4">
+        <div className="max-w-md mx-auto">
+          <h1 className="text-3xl font-bold mb-2">Loading...</h1>
+        </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center p-4">
-      <Card className="w-full max-w-[min(90vw,380px)] border-border">
-        <div className="flex flex-col items-center gap-6 p-6">
-          <h1 className="text-2xl font-semibold text-foreground">
-            Welcome {userName}
-          </h1>
-          
-          <PredictionForm 
-            userName={userName}
-            fixtures={fixtures}
-          />
+    <main className="min-h-screen bg-[#1a1f2e] text-white p-4">
+      <div className="max-w-md mx-auto">
+        <h1 className="text-3xl font-bold mb-2">
+          Enter Your <span className="text-[#ffa500]">Predictions</span>
+        </h1>
+        <p className="text-gray-400 mb-8">Predict scores for the upcoming matches</p>
 
-          <div className="w-full space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {fixtures.map((fixture, index) => (
+            <div key={fixture.id} className="flex items-center">
+              <div className="w-36 text-right">
+                <span className="text-white">{fixture.homeTeam}</span>
+              </div>
+              <div className="flex items-center gap-2 mx-4">
+                <Input
+                  ref={(el) => {
+                    if (el) {
+                      inputRefs.current[index * 2] = el;
+                    }
+                  }}
+                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  value={predictions[fixture.id]?.home || ''}
+                  onChange={(e) => handleScoreChange(fixture.id, 'home', e.target.value, index * 2)}
+                />
+                <span className="text-gray-400 mx-1">-</span>
+                <Input
+                  ref={(el) => {
+                    if (el) {
+                      inputRefs.current[index * 2 + 1] = el;
+                    }
+                  }}
+                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  value={predictions[fixture.id]?.away || ''}
+                  onChange={(e) => handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)}
+                />
+              </div>
+              <div className="w-36">
+                <span className="text-white">{fixture.awayTeam}</span>
+              </div>
+            </div>
+          ))}
+          {fixtures.length > 0 && (
             <Button 
-              variant="secondary"
-              className="w-full h-11"
-              onClick={() => router.push('/user')}
+              className="w-full mt-8 bg-[#ffa500] hover:bg-[#ffa500]/90" 
+              disabled={!isFormComplete()}
+              onClick={handleSubmit}
             >
-              Back to Users
+              Submit Predictions
             </Button>
-            
-            <Button 
-              variant="secondary"
-              className="w-full h-11"
-              onClick={() => router.push('/')}
-            >
-              Home
-            </Button>
-          </div>
-        </div>
-      </Card>
+          )}
+        </form>
+      </div>
     </main>
   )
 } 
