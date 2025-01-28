@@ -65,10 +65,20 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "toast-hide": {
+          '0%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        },
+        "toast-slide-in-right": {
+          '0%': { transform: `translateX(calc(100% + 1rem))` },
+          '100%': { transform: 'translateX(0)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "toast-hide": 'toast-hide 0.2s ease-in forwards',
+        "toast-slide-in-right": 'toast-slide-in-right 0.2s ease-out',
       },
     },
   },
