@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/table"
 
 export interface LeaderboardEntry {
-  rank: string
-  player: string
-  total: string
-  gameweekTotal: string
+  rank: string;
+  username: string;
+  player: string;    // Add this field
+  total: number;        // Required by the table
+  gameweekTotal: number; // Required by the table
+  // ... any other fields
 }
 
 export function LeaderboardTable({ data }: { data: LeaderboardEntry[] }) {

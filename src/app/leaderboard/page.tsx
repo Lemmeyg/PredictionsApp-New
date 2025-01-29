@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { useEffect, useState } from "react"
+import { LeaderboardEntry } from '@/components/leaderboard/leaderboard-table'
 
-interface LeaderboardEntry {
-  rank: string
-  player: string
-  points: string
-  predictions: string
+// Define type for raw data from API
+interface RawLeaderboardData {
+  username: string;
+  rank: string;
+  player: string;
+  total: number | null;
+  gameweekTotal: number | null;
 }
 
 export default function LeaderboardPage() {
@@ -23,13 +26,19 @@ export default function LeaderboardPage() {
     const fetchLeaderboard = async () => {
       try {
         const response = await fetch('/api/leaderboard')
-        if (!response.ok) {
-          throw new Error('Failed to fetch leaderboard data')
-        }
-        const data = await response.json()
-        setData(data)
-      } catch (err) {
-        console.error('Error fetching leaderboard:', err)
+        const rawData = await response.json() as RawLeaderboardData[]
+        
+        const transformedData: LeaderboardEntry[] = rawData.map((entry) => ({
+          rank: entry.rank,
+          username: entry.username,
+          player: entry.player,
+          total: entry.total ?? 0,
+          gameweekTotal: entry.gameweekTotal ?? 0
+        }))
+        
+        setData(transformedData)
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error)
         setError('Failed to load leaderboard')
       } finally {
         setIsLoading(false)
