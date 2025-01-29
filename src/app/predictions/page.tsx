@@ -114,7 +114,8 @@ export default function PredictionsPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent double submission
+    e.preventDefault();
+    console.log('1. Form submission started');
     
     try {
       const predictionsData = fixtures.map(fixture => ({
@@ -127,7 +128,7 @@ export default function PredictionsPage() {
         submittedAt: new Date().toISOString()
       }));
 
-      console.log('Submitting predictions:', predictionsData);
+      console.log('2. Predictions data prepared:', predictionsData);
 
       const response = await fetch('/api/predictions/submit', {
         method: 'POST',
@@ -137,45 +138,53 @@ export default function PredictionsPage() {
         body: JSON.stringify({ predictions: predictionsData }),
       });
 
+      console.log('3. API response received:', response.status);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to submit predictions');
+        throw new Error('Failed to submit predictions');
       }
 
-      // Show success toast
+      console.log('4. Showing toast...');
       toast({
-        title: "Predictions Submitted",
-        description: fixtures.map(fixture => 
-          `${fixture.homeTeam} ${predictions[fixture.id]?.home} - ${predictions[fixture.id]?.away} ${fixture.awayTeam}`
-        ).join('\n'),
-        duration: 3000,
+        title: "Predictions Submitted!",
+        description: (
+          <div className="mt-2 space-y-1">
+            {fixtures.map((fixture) => (
+              <div key={fixture.id} className="flex justify-between text-sm">
+                <span className="flex-1">{fixture.homeTeam}</span>
+                <span className="px-2 text-[#ffa500] font-bold">{predictions[fixture.id]?.home}</span>
+                <span className="px-1">-</span>
+                <span className="px-2 text-[#ffa500] font-bold">{predictions[fixture.id]?.away}</span>
+                <span className="flex-1 text-right">{fixture.awayTeam}</span>
+              </div>
+            ))}
+          </div>
+        ),
+        duration: 4000,
       });
 
-      // Redirect after successful submission
-      setTimeout(() => {
-        router.push('/');
-      }, 3000);
+      console.log('5. Toast shown, waiting before redirect...');
+      // Additional delay to ensure toast is visible
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('6. Starting redirect');
+      router.push('/');
 
     } catch (error) {
-      console.error('Error submitting predictions:', error);
+      console.error('Error in submission:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to submit predictions",
+        title: "Error!",
+        description: "Failed to submit predictions.",
         variant: "destructive",
+        duration: 5000,
       });
     }
   };
 
-  console.log('Rendering with state:', { isLoading, fixtures, username })
-
   if (isLoading) {
-    return (
-      <main className="min-h-screen bg-[#1a1f2e] text-white p-4">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-3xl font-bold mb-2">Loading...</h1>
-        </div>
-      </main>
-    )
+    return <div className="min-h-screen bg-[#1a1f2e] flex items-center justify-center">
+      <p className="text-white text-xl">Loading...</p>
+    </div>
   }
 
   return (
@@ -222,9 +231,9 @@ export default function PredictionsPage() {
           ))}
           {fixtures.length > 0 && (
             <Button 
+              type="submit"
               className="w-full mt-8 bg-[#ffa500] hover:bg-[#ffa500]/90" 
               disabled={!isFormComplete()}
-              onClick={handleSubmit}
             >
               Submit Predictions
             </Button>

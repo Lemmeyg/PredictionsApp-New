@@ -1,5 +1,14 @@
 {
-  "node": {},
+  "node": {
+    "cde6d9d96ad87e7e3ebf576ccf5d45032565b7d8": {
+      "workers": {
+        "app/predictions/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5CGordo%5C%5CDocuments%5C%5CGitHub%5C%5CPredictionsApp-New%5C%5Csrc%5C%5Capp%5C%5Cpredictions%5C%5Cactions.ts%22%2C%5B%22runFixtureUpdate%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/predictions/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
-  "encryptionKey": "rAvam3ChCDSNemxUVnjFmeLIEOFA4yfFA1ubwBpZ7rI="
+  "encryptionKey": "BAX1SklkOVCVA9sWq4Xws4sx1wYYJDXaDJCVdpjWaV4="
 }

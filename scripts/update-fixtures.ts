@@ -6,7 +6,7 @@ crypto.constants.OPENSSL_VERSION_NUMBER;
 import { fetchFixtures } from '../src/lib/api/football';
 import { updateFixturesInGoogleSheets } from '../src/lib/api/sheets';
 // this script will import data from the football api and update the google sheets
-async function updateFixtures() {
+export async function updateFixtures() {
   try {
     console.log('Starting daily fixture update...');
     
@@ -18,13 +18,20 @@ async function updateFixtures() {
     await updateFixturesInGoogleSheets(fixtures);
     console.log('Successfully updated fixtures in Google Sheets');
     
+    return true;
+    
   } catch (error) {
     console.error('Error updating fixtures:', error);
-    process.exit(1);
+    throw error;
   }
 }
 
 // Only run if called directly (not imported)
 if (require.main === module) {
-  updateFixtures();
-} 
+  updateFixtures()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}
+
+// Make sure we're exporting the function as default as well
+export default updateFixtures; 
