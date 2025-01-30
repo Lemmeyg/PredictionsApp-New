@@ -5,7 +5,7 @@ import { JWT } from 'google-auth-library';
 import type { Fixture } from './football';  // Add 'type' to import only the type
 
 // Load environment variables from .env.local
-config({ path: resolve(process.cwd(), '.env.local') });
+//config({ path: resolve(process.cwd(), '.env.local') });
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_ID;
 const SHEET_NAME = 'Fixtures';

@@ -22,7 +22,7 @@ export interface Fixture {
 }
 
 // Load environment variables from .env.local
-config({ path: resolve(process.cwd(), '.env.local') });
+//config({ path: resolve(process.cwd(), '.env.local') });
 
 // Constants
 const PREMIER_LEAGUE_ID = 39;
