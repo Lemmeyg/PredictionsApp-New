@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config } from 'dotenv';
+//import { config } from 'dotenv';
 import { resolve } from 'path';
 
 // Export the Fixture interface
