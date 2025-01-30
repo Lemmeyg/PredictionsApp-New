@@ -1,6 +1,6 @@
 {
   "/page": "app/page.js",
+  "/leaderboard/page": "app/leaderboard/page.js",
   "/user/page": "app/user/page.js",
-  "/predictions/page": "app/predictions/page.js",
-  "/api/fixtures/gameweek/route": "app/api/fixtures/gameweek/route.js"
+  "/predictions/page": "app/predictions/page.js"
 }

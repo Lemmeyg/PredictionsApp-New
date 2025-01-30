@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Table,
   TableBody,
@@ -6,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useState, useEffect } from 'react'
 
 export interface LeaderboardEntry {
   rank: string;
@@ -16,7 +19,30 @@ export interface LeaderboardEntry {
   // ... any other fields
 }
 
-export function LeaderboardTable({ data }: { data: LeaderboardEntry[] }) {
+interface LeaderboardData {
+  data: any[] // Replace 'any' with your specific type
+}
+
+export function LeaderboardTable() {
+  const [data, setData] = useState<LeaderboardData['data']>([])
+
+  useEffect(() => {
+    fetch('/api/leaderboard')
+      .then(res => res.json())
+      .then((result: LeaderboardData) => {
+        if (Array.isArray(result.data)) {
+          setData(result.data)
+        } else {
+          console.error('Invalid data format:', result)
+          setData([])
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching leaderboard:', error)
+        setData([])
+      })
+  }, [])
+
   return (
     <div className="overflow-x-auto">
       <Table>
