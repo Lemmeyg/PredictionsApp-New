@@ -1,8 +1,8 @@
 import { fetchFixtures } from '../src/lib/api/football';
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 
 // Load environment variables from .env.local
-dotenv.config({ path: '.env.local' });
+//dotenv.config({ path: '.env.local' });
 
 async function testFootballApi() {
   try {

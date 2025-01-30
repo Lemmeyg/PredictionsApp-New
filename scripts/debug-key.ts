@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 
-dotenv.config({ path: '.env.local' });
+//dotenv.config({ path: '.env.local' });
 
 function debugPrivateKey() {
   const key = process.env.GOOGLE_PRIVATE_KEY;

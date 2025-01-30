@@ -1,12 +1,12 @@
 //this script is to test the clear fixtures function, clearing cells on the google Fixtures sheet.
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 import path from 'path';
 
 // Load environment variables BEFORE any other imports
 const envPath = path.resolve(process.cwd(), '.env.local');
 console.log('Loading environment variables from:', envPath);
 
-const result = dotenv.config({ path: envPath });
+//const result = dotenv.config({ path: envPath });
 
 if (result.error) {
   console.error('Error loading .env.local file:', result.error);

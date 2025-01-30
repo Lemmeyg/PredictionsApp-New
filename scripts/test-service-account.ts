@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import { GoogleAuth, JWT } from 'google-auth-library';
 
-dotenv.config({ path: '.env.local' });
+//dotenv.config({ path: '.env.local' });
 
 // Define the credentials interface
 interface ServiceAccountCredentials {

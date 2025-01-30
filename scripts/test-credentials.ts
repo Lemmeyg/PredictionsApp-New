@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import { JWT } from 'google-auth-library';
 
-dotenv.config({ path: '.env.local' });
+//dotenv.config({ path: '.env.local' });
 
 function formatPrivateKey(key: string): string {
   const cleanKey = key.replace(/\\n/g, '').replace(/"/g, '');
