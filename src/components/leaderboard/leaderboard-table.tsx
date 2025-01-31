@@ -11,18 +11,11 @@ import {
 
 export interface LeaderboardEntry {
   rank: string;
-  username: string;
-  player: string;    // Add this field
-  total: number;        // Required by the table
-  gameweekTotal: number; // Required by the table
-  // ... any other fields
+  player: string;
+  total: string | number;
+  gameweekTotal: string | number;
 }
 
-interface LeaderboardData {
-  data: any[] // Replace 'any' with your specific type
-}
-
-// Add props interface
 interface LeaderboardTableProps {
   data: LeaderboardEntry[]
 }
