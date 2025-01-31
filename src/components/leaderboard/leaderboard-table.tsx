@@ -8,33 +8,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useState, useEffect } from 'react'
 
 export interface LeaderboardEntry {
   rank: string;
-  player: string;
-  total: string | number;
-  gameweekTotal: string | number;
+  username: string;
+  player: string;    // Add this field
+  total: number;        // Required by the table
+  gameweekTotal: number; // Required by the table
+  // ... any other fields
 }
 
-export function LeaderboardTable() {
-  const [data, setData] = useState<LeaderboardEntry[]>([])
+interface LeaderboardData {
+  data: any[] // Replace 'any' with your specific type
+}
 
-  useEffect(() => {
-    const controller = new AbortController();
+// Add props interface
+interface LeaderboardTableProps {
+  data: LeaderboardEntry[]
+}
 
-    fetch('/api/leaderboard', { signal: controller.signal })
-      .then(res => res.json())
-      .then(result => setData(result))
-      .catch(error => {
-        if (error.name === 'AbortError') return;
-        console.error('Error fetching leaderboard:', error);
-        setData([]);
-      });
-
-    return () => controller.abort();
-  }, []);
-
+export function LeaderboardTable({ data }: LeaderboardTableProps) {
   return (
     <div className="overflow-x-auto">
       <Table>
