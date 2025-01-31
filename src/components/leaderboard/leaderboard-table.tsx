@@ -13,37 +13,26 @@ import { useState, useEffect } from 'react'
 export interface LeaderboardEntry {
   rank: string;
   player: string;
-  total: string;
-  gameweekTotal: string;
+  total: string | number;
+  gameweekTotal: string | number;
 }
 
 export function LeaderboardTable() {
   const [data, setData] = useState<LeaderboardEntry[]>([])
 
   useEffect(() => {
-    fetch('/api/leaderboard')
+    const controller = new AbortController();
+
+    fetch('/api/leaderboard', { signal: controller.signal })
       .then(res => res.json())
-      .then((result) => {
-        // Ensure we're working with the array directly
-        if (!Array.isArray(result)) {
-          console.error('Expected array, got:', result);
-          return;
-        }
-
-        // Explicitly map the data to match our interface
-        const formattedData = result.map((item): LeaderboardEntry => ({
-          rank: String(item.rank),
-          player: String(item.player),
-          total: String(item.total),
-          gameweekTotal: String(item.gameweekTotal)
-        }));
-
-        setData(formattedData);
-      })
+      .then(result => setData(result))
       .catch(error => {
+        if (error.name === 'AbortError') return;
         console.error('Error fetching leaderboard:', error);
         setData([]);
       });
+
+    return () => controller.abort();
   }, []);
 
   return (
@@ -58,7 +47,7 @@ export function LeaderboardTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((entry) => (
+          {data?.map((entry) => (
             <TableRow key={entry.rank}>
               <TableCell>{entry.rank}</TableCell>
               <TableCell>{entry.player}</TableCell>
