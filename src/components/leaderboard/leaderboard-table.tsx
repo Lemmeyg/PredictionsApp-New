@@ -48,10 +48,10 @@ export function LeaderboardTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Rank</TableHead>
-            <TableHead>Player</TableHead>
-            <TableHead>Total</TableHead>
-            <TableHead>Gameweek</TableHead>
+            <TableHead className="text-primary">Rank</TableHead>
+            <TableHead className="text-primary">Player</TableHead>
+            <TableHead className="text-primary">Total</TableHead>
+            <TableHead className="text-primary">Gameweek</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

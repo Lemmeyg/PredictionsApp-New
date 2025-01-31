@@ -188,58 +188,60 @@ export default function PredictionsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#1a1f2e] text-white p-4">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold mb-2">
-          Enter Your <span className="text-[#ffa500]">Predictions</span>
+    <div className="container mx-auto">
+      <div className="text-center mb-6">
+        <h1 className="text-4xl font-bold">
+          Enter Your <span className="text-primary">Predictions</span>
         </h1>
-        <p className="text-gray-400 mb-8">Predict scores for the upcoming matches</p>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {fixtures.map((fixture, index) => (
-            <div key={fixture.id} className="flex items-center">
-              <div className="w-36 text-right">
-                <span className="text-white">{fixture.homeTeam}</span>
-              </div>
-              <div className="flex items-center gap-2 mx-4">
-                <Input
-                  ref={(el) => {
-                    if (el) {
-                      inputRefs.current[index * 2] = el;
-                    }
-                  }}
-                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-                  value={predictions[fixture.id]?.home || ''}
-                  onChange={(e) => handleScoreChange(fixture.id, 'home', e.target.value, index * 2)}
-                />
-                <span className="text-gray-400 mx-1">-</span>
-                <Input
-                  ref={(el) => {
-                    if (el) {
-                      inputRefs.current[index * 2 + 1] = el;
-                    }
-                  }}
-                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-                  value={predictions[fixture.id]?.away || ''}
-                  onChange={(e) => handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)}
-                />
-              </div>
-              <div className="w-36">
-                <span className="text-white">{fixture.awayTeam}</span>
-              </div>
-            </div>
-          ))}
-          {fixtures.length > 0 && (
-            <Button 
-              type="submit"
-              className="w-full mt-8 bg-[#ffa500] hover:bg-[#ffa500]/90" 
-              disabled={!isFormComplete()}
-            >
-              Submit Predictions
-            </Button>
-          )}
-        </form>
+        <p className="text-muted-foreground mt-2">
+          Predict scores for the upcoming matches
+        </p>
       </div>
-    </main>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {fixtures.map((fixture, index) => (
+          <div key={fixture.id} className="flex items-center">
+            <div className="w-36 text-right">
+              <span className="text-white">{fixture.homeTeam}</span>
+            </div>
+            <div className="flex items-center gap-2 mx-4">
+              <Input
+                ref={(el) => {
+                  if (el) {
+                    inputRefs.current[index * 2] = el;
+                  }
+                }}
+                className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                value={predictions[fixture.id]?.home || ''}
+                onChange={(e) => handleScoreChange(fixture.id, 'home', e.target.value, index * 2)}
+              />
+              <span className="text-gray-400 mx-1">-</span>
+              <Input
+                ref={(el) => {
+                  if (el) {
+                    inputRefs.current[index * 2 + 1] = el;
+                  }
+                }}
+                className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                value={predictions[fixture.id]?.away || ''}
+                onChange={(e) => handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)}
+              />
+            </div>
+            <div className="w-36">
+              <span className="text-white">{fixture.awayTeam}</span>
+            </div>
+          </div>
+        ))}
+        {fixtures.length > 0 && (
+          <Button 
+            type="submit"
+            className="w-full mt-8 bg-[#ffa500] hover:bg-[#ffa500]/90" 
+            disabled={!isFormComplete()}
+          >
+            Submit Predictions
+          </Button>
+        )}
+      </form>
+    </div>
   )
 } 

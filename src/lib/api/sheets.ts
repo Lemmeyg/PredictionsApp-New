@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 import { resolve } from 'path';
 import { JWT } from 'google-auth-library';
 import type { Fixture } from './football';  // Add 'type' to import only the type
-import { getGoogleCredentials } from '../google/auth';
+//import { getGoogleCredentials } from '../google/auth';
 
 // Load environment variables from .env.local
 //config({ path: resolve(process.cwd(), '.env.local') });
@@ -39,7 +39,7 @@ verifyEnvVariables();
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
-const credentials = getGoogleCredentials();
+//const credentials = getGoogleCredentials();
 
 const auth = new JWT({
   email: process.env.GOOGLE_CLIENT_EMAIL,
