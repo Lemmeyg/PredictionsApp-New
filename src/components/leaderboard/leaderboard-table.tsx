@@ -12,36 +12,39 @@ import { useState, useEffect } from 'react'
 
 export interface LeaderboardEntry {
   rank: string;
-  username: string;
-  player: string;    // Add this field
-  total: number;        // Required by the table
-  gameweekTotal: number; // Required by the table
-  // ... any other fields
-}
-
-interface LeaderboardData {
-  data: any[] // Replace 'any' with your specific type
+  player: string;
+  total: string;
+  gameweekTotal: string;
 }
 
 export function LeaderboardTable() {
-  const [data, setData] = useState<LeaderboardData['data']>([])
+  const [data, setData] = useState<LeaderboardEntry[]>([])
 
   useEffect(() => {
     fetch('/api/leaderboard')
       .then(res => res.json())
-      .then((result: LeaderboardData) => {
-        if (Array.isArray(result.data)) {
-          setData(result.data)
-        } else {
-          console.error('Invalid data format:', result)
-          setData([])
+      .then((result) => {
+        // Ensure we're working with the array directly
+        if (!Array.isArray(result)) {
+          console.error('Expected array, got:', result);
+          return;
         }
+
+        // Explicitly map the data to match our interface
+        const formattedData = result.map((item): LeaderboardEntry => ({
+          rank: String(item.rank),
+          player: String(item.player),
+          total: String(item.total),
+          gameweekTotal: String(item.gameweekTotal)
+        }));
+
+        setData(formattedData);
       })
       .catch(error => {
-        console.error('Error fetching leaderboard:', error)
-        setData([])
-      })
-  }, [])
+        console.error('Error fetching leaderboard:', error);
+        setData([]);
+      });
+  }, []);
 
   return (
     <div className="overflow-x-auto">
