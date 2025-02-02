@@ -28,6 +28,7 @@
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.5",
     "@shadcn/ui": "^0.0.4",
+    "axios": "^1.6.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "google-auth-library": "^9.15.0",
@@ -38,6 +39,9 @@
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "axios": "^1.6.7"
+    "vercel": "^28.18.5"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }

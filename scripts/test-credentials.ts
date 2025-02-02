@@ -18,7 +18,7 @@ async function testCredentials() {
   try {
     console.log('Testing Google credentials...');
 
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
     if (!privateKey) {
       throw new Error('Private key is missing');
     }

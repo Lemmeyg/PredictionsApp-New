@@ -3,7 +3,7 @@
 //dotenv.config({ path: '.env.local' });
 
 function debugPrivateKey() {
-  const key = process.env.GOOGLE_PRIVATE_KEY;
+  const key = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
   if (!key) {
     console.error('No private key found in environment variables');
     return;

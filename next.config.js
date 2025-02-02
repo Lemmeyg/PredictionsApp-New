@@ -1,6 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Add any necessary configuration here
+  experimental: {
+    serverComponentsExternalPackages: ['@google-cloud/storage']
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'node-fetch$': 'node-fetch/lib/index.js',
+      }
+    }
+    return config
+  },
 }
 
 module.exports = nextConfig 
