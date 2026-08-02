@@ -21,6 +21,7 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.3.2",
+    "vercel": "^28.18.5",
     "vitest": "^4.1.10"
   },
   "dependencies": {
@@ -39,8 +40,7 @@
     "react-dom": "^18.2.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^2.0.0",
-    "tailwindcss-animate": "^1.0.7",
-    "vercel": "^28.18.5"
+    "tailwindcss-animate": "^1.0.7"
   },
   "engines": {
     "node": ">=22.x"

@@ -80,10 +80,10 @@ export function PredictionForm({
       }))
     )
 
-    if (!result.success) {
+    if (result.success === false) {
       toast({
-        title: 'alreadySubmitted' in result && result.alreadySubmitted ? 'Already submitted' : 'Error',
-        description: 'error' in result ? result.error : 'Unknown error',
+        title: result.alreadySubmitted ? 'Already submitted' : 'Error',
+        description: result.error,
         variant: 'destructive',
       })
       return
