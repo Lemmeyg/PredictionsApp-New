@@ -26,4 +26,8 @@ export interface PredictionRow {
   predicted_home_score: number
   predicted_away_score: number
   submitted_at: string
+  // Kept in sync by a database trigger (see supabase/migrations/0003_predictions_score_points.sql)
+  // for cross-checking against the app's live TypeScript scoring calculation.
+  actual_score: string | null
+  points_awarded: number | null
 }
