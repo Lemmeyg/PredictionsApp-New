@@ -1,5 +1,4 @@
 import axios from 'axios';
-//import { config } from 'dotenv';
 
 // Export the Fixture interface
 export interface Fixture {
@@ -20,83 +19,92 @@ export interface Fixture {
   awayScore: number | string;
 }
 
-// Load environment variables from .env.local
-//config({ path: resolve(process.cwd(), '.env.local') });
+interface FootballDataMatch {
+  id: number;
+  utcDate: string;
+  status: string;
+  matchday: number;
+  homeTeam: { id: number; name: string };
+  awayTeam: { id: number; name: string };
+  score: {
+    fullTime: {
+      home: number | null;
+      away: number | null;
+    };
+  };
+}
 
 // Constants
-const PREMIER_LEAGUE_ID = 39;
-const SEASON = 2024;
-const FOOTBALL_API_BASE_URL = 'https://v3.football.api-sports.io';
+const COMPETITION_CODE = 'PL'; // Premier League
+const SEASON = Number(process.env.FOOTBALL_DATA_SEASON ?? '2026');
+const FOOTBALL_DATA_BASE_URL = 'https://api.football-data.org/v4';
+
+// football-data.org status vocabulary -> this app's internal status codes.
+// Keeping this mapping isolated here means gameweek.ts, fixtures.ts, and the
+// admin override action never need to know which provider is behind them.
+const STATUS_MAP: Record<string, string> = {
+  SCHEDULED: 'NS',
+  TIMED: 'NS',
+  IN_PLAY: 'LIVE',
+  PAUSED: 'LIVE',
+  SUSPENDED: 'SUSP',
+  FINISHED: 'FT',
+  POSTPONED: 'PST',
+  CANCELLED: 'CANC',
+  AWARDED: 'AWD',
+};
+
+function mapStatus(providerStatus: string): string {
+  return STATUS_MAP[providerStatus] ?? providerStatus;
+}
 
 // Initialize API client
-const footballApiClient = axios.create({
-  baseURL: FOOTBALL_API_BASE_URL,
+const footballDataClient = axios.create({
+  baseURL: FOOTBALL_DATA_BASE_URL,
   headers: {
-    'x-rapidapi-host': 'v3.football.api-sports.io',
-    'x-rapidapi-key': process.env.FOOTBALL_API_KEY
-  }
-});
-
-// Debug API configuration
-console.log('Football API Configuration:', {
-  baseURL: footballApiClient.defaults.baseURL,
-  hasApiKey: !!footballApiClient.defaults.headers['x-rapidapi-key']
+    'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+  },
 });
 
 export async function fetchFixtures(): Promise<Fixture[]> {
   try {
-    console.log('Fetching fixtures with params:', {
-      league: PREMIER_LEAGUE_ID,
-      season: SEASON,
-    });
-    
-    const response = await footballApiClient.get('/fixtures', {
+    const response = await footballDataClient.get(`/competitions/${COMPETITION_CODE}/matches`, {
       params: {
-        league: PREMIER_LEAGUE_ID,
         season: SEASON,
       },
     });
 
-    console.log('Response status:', response.status);
-    console.log('Raw API Response:', JSON.stringify(response.data, null, 2));
-    
-    if (!response.data?.response) {
-      console.error('Invalid API Response structure');
-      return [];
+    const matches: FootballDataMatch[] = response.data?.matches;
+
+    if (!matches) {
+      throw new Error('Invalid API response structure from football-data.org');
     }
 
-    const fixtures = response.data.response.map((item) => {
-      // Extract round number from "Regular Season - 38" format
-      const roundMatch = item.league.round.match(/Regular Season - (\d+)/);
-      const round = roundMatch ? parseInt(roundMatch[1], 10) : 0;
-      
-      return {
-        id: item.fixture.id,
-        date: item.fixture.date.split('T')[0],
-        startTime: item.fixture.date,
-        round: round,                // Will be the number (e.g., 38) from "Regular Season - 38"
-        homeTeam: {
-          id: item.teams.home.id,
-          name: item.teams.home.name,
-        },
-        awayTeam: {
-          id: item.teams.away.id,
-          name: item.teams.away.name,
-        },
-        status: item.fixture.status.short,
-        homeScore: item.goals.home ?? '',
-        awayScore: item.goals.away ?? '',
-      };
-    });
+    const fixtures = matches.map((match) => ({
+      id: match.id,
+      date: match.utcDate.split('T')[0],
+      startTime: match.utcDate,
+      round: match.matchday,
+      homeTeam: {
+        id: match.homeTeam.id,
+        name: match.homeTeam.name,
+      },
+      awayTeam: {
+        id: match.awayTeam.id,
+        name: match.awayTeam.name,
+      },
+      status: mapStatus(match.status),
+      homeScore: match.score.fullTime.home ?? '',
+      awayScore: match.score.fullTime.away ?? '',
+    }));
 
-    // Debug log to verify round numbers
-    console.log('Sample fixture rounds:', fixtures.slice(0, 3).map(f => f.round));
-    
-    console.log(`Transformed ${fixtures.length} fixtures`);
+    console.log(`Fetched ${fixtures.length} fixtures`);
     return fixtures;
 
   } catch (error: unknown) {
     console.error('Error in fetchFixtures:', error);
-    return [];
+    // Rethrow so a failed sync surfaces as an error to the caller rather than
+    // being silently reported as a successful sync of zero fixtures.
+    throw error;
   }
-} 
+}
