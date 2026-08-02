@@ -119,7 +119,10 @@ export function CumulativeScoreChart({
     hoveredIndex !== null
       ? series
           .map((playerSeries, colorIndex) => ({
-            displayName: playerSeries.displayName,
+            // The tooltip is a fixed-width box, so it's the one spot on this
+            // chart tight enough to warrant initials over the full name --
+            // the legend below spells out the initials -> name mapping.
+            label: playerSeries.initials ?? playerSeries.displayName.slice(0, 2).toUpperCase(),
             value: playerSeries.points[hoveredIndex]?.cumulativeTotal ?? 0,
             color: PALETTE[colorIndex % PALETTE.length],
           }))
@@ -270,10 +273,10 @@ export function CumulativeScoreChart({
             <div className="bg-[#1E1E1E] border border-gray-700 rounded-md p-2 text-xs">
               <div className="text-muted-foreground mb-1">Round {hoveredRound}</div>
               {tooltipRows.map((row) => (
-                <div key={row.displayName} className="flex items-center justify-between gap-2">
+                <div key={row.label} className="flex items-center justify-between gap-2">
                   <span className="flex items-center gap-1.5 text-white">
                     <span className="inline-block w-2.5 h-0.5" style={{ backgroundColor: row.color }} />
-                    {row.displayName}
+                    {row.label}
                   </span>
                   <span className="text-white font-semibold">{row.value}</span>
                 </div>

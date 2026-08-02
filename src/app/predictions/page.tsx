@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentRound } from '@/lib/predictions/gameweek'
-import type { FixtureRow, Profile } from '@/lib/supabase/database.types'
+import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
 import { PredictionForm } from '@/components/predictions/prediction-form'
 
 export default async function PredictionsPage() {
@@ -32,13 +32,14 @@ export default async function PredictionsPage() {
 
   const roundFixtures = fixtures.filter((f) => f.round === currentRound)
 
-  const { data: existing } = await supabase
+  const { data: existingData } = await supabase
     .from('predictions')
     .select('*')
     .eq('user_id', user.id)
     .in('fixture_id', roundFixtures.map((f) => f.id))
 
-  const alreadySubmitted = (existing ?? []).length > 0
+  const existing = (existingData ?? []) as PredictionRow[]
+  const alreadySubmitted = existing.length > 0
 
   const { data: profileData } = await supabase
     .from('profiles')

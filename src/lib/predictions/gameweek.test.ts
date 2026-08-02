@@ -40,6 +40,20 @@ describe('getCurrentRound', () => {
     ]
     expect(getCurrentRound(fixtures)).toBeNull()
   })
+
+  it('does not treat a suspended or cancelled fixture as not-started', () => {
+    const fixtures = [
+      { round: 1, status: 'SUSP' },
+      { round: 1, status: 'NS' },
+      { round: 2, status: 'NS' },
+      { round: 2, status: 'NS' },
+    ]
+    expect(getCurrentRound(fixtures)).toBe(2)
+  })
+
+  it('returns null for an empty fixture list', () => {
+    expect(getCurrentRound([])).toBeNull()
+  })
 })
 
 describe('getLatestCompletedRound', () => {
@@ -74,5 +88,18 @@ describe('getLatestCompletedRound', () => {
   it('returns null when no round is complete', () => {
     const fixtures = [{ round: 1, status: 'NS' }]
     expect(getLatestCompletedRound(fixtures)).toBeNull()
+  })
+
+  it('does not treat a suspended fixture as finished, even alongside completed ones', () => {
+    const fixtures = [
+      { round: 1, status: 'FT' },
+      { round: 2, status: 'FT' },
+      { round: 2, status: 'SUSP' },
+    ]
+    expect(getLatestCompletedRound(fixtures)).toBe(1)
+  })
+
+  it('returns null for an empty fixture list', () => {
+    expect(getLatestCompletedRound([])).toBeNull()
   })
 })
