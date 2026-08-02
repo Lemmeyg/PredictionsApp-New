@@ -2,9 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
+import { cn } from '@/lib/utils'
 import { submitPredictions } from '@/app/predictions/submit-action'
 
 interface FormFixture {
@@ -25,7 +27,12 @@ export function PredictionForm({
   const [predictions, setPredictions] = useState<
     Record<number, { home: string; away: string }>
   >({})
+  const [expandedFixtureId, setExpandedFixtureId] = useState<number | null>(null)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  const toggleExpanded = (fixtureId: number) => {
+    setExpandedFixtureId((current) => (current === fixtureId ? null : fixtureId))
+  }
 
   if (alreadySubmitted) {
     return (
@@ -109,40 +116,69 @@ export function PredictionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {fixtures.map((fixture, index) => (
-        <div key={fixture.id} className="flex items-center">
-          <div className="w-36 text-right">
-            <span className="text-white">{fixture.homeTeam}</span>
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
+      {fixtures.map((fixture, index) => {
+        const isExpanded = expandedFixtureId === fixture.id
+
+        return (
+          <div
+            key={fixture.id}
+            className="border border-gray-700 rounded-lg p-4"
+          >
+            <div className="flex items-center">
+              <div className="w-36 text-right">
+                <span className="text-white">{fixture.homeTeam}</span>
+              </div>
+              <div className="flex items-center gap-2 mx-4">
+                <Input
+                  ref={(el) => {
+                    if (el) inputRefs.current[index * 2] = el
+                  }}
+                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  value={predictions[fixture.id]?.home || ''}
+                  onChange={(e) =>
+                    handleScoreChange(fixture.id, 'home', e.target.value, index * 2)
+                  }
+                />
+                <span className="text-gray-400 mx-1">-</span>
+                <Input
+                  ref={(el) => {
+                    if (el) inputRefs.current[index * 2 + 1] = el
+                  }}
+                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  value={predictions[fixture.id]?.away || ''}
+                  onChange={(e) =>
+                    handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)
+                  }
+                />
+              </div>
+              <div className="w-36">
+                <span className="text-white">{fixture.awayTeam}</span>
+              </div>
+            </div>
+
+            {isExpanded && (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Match details coming soon
+              </p>
+            )}
+
+            <div className="flex justify-end mt-2">
+              <button
+                type="button"
+                onClick={() => toggleExpanded(fixture.id)}
+                aria-expanded={isExpanded}
+                aria-label={isExpanded ? 'Collapse match details' : 'Expand match details'}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <ChevronDown
+                  className={cn('h-5 w-5 transition-transform', isExpanded && 'rotate-180')}
+                />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2 mx-4">
-            <Input
-              ref={(el) => {
-                if (el) inputRefs.current[index * 2] = el
-              }}
-              className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-              value={predictions[fixture.id]?.home || ''}
-              onChange={(e) =>
-                handleScoreChange(fixture.id, 'home', e.target.value, index * 2)
-              }
-            />
-            <span className="text-gray-400 mx-1">-</span>
-            <Input
-              ref={(el) => {
-                if (el) inputRefs.current[index * 2 + 1] = el
-              }}
-              className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-              value={predictions[fixture.id]?.away || ''}
-              onChange={(e) =>
-                handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)
-              }
-            />
-          </div>
-          <div className="w-36">
-            <span className="text-white">{fixture.awayTeam}</span>
-          </div>
-        </div>
-      ))}
+        )
+      })}
       {fixtures.length > 0 && (
         <Button type="submit" className="w-full mt-8" disabled={!isFormComplete()}>
           Submit Predictions
