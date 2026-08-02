@@ -15,7 +15,7 @@ export default async function HomePage() {
     <main className="min-h-[100dvh] flex items-center justify-center p-4">
       <Card className="w-full max-w-[min(90vw,380px)] border-border">
         <div className="flex flex-col items-center gap-6 p-6">
-          <div className="bg-primary rounded-full p-4">
+          <div className="bg-primary rounded-full p-4 animate-in fade-in zoom-in duration-500 transition-transform hover:scale-110">
             <Trophy className="h-8 w-8 text-primary-foreground" />
           </div>
 
