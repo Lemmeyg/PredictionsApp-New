@@ -32,11 +32,6 @@ theme, not by phase or urgency.
   good desktop experience — current design is mobile-first/narrow-centered
   throughout (login, predictions, leaderboard). Needs a deliberate desktop
   breakpoint pass, not just "it doesn't break."
-- **Use initials consistently instead of full names.** `profiles.initials` exists
-  and is already used on the cumulative graph's line-end labels, but the
-  leaderboard table and other surfaces still show full `display_name`. Decide
-  where initials should replace full names app-wide vs. where full names read
-  better (e.g. a "Player" column vs. a compact chart label).
 - **In-app admin management.** Right now `is_admin` is toggled directly in the
   Supabase dashboard (by design, for Phase 1 simplicity). If more than one
   admin needs to be added/removed regularly, a small in-app UI would remove the
@@ -51,28 +46,22 @@ theme, not by phase or urgency.
 
 ## Tech debt / housekeeping
 
-- `next.config.js` still declares `serverComponentsExternalPackages:
-  ['@google-cloud/storage']` and a `node-fetch$` webpack alias — leftover
-  Google-era config, safe to remove.
-- `package.json` keeps `vercel` as a production dependency (should be a dev
-  dependency, if kept at all).
 - `tsconfig.json` has `strict: false` — most `as FixtureRow[]` / `as Profile |
   null` casts throughout the app pages are unchecked as a result. Turning on
   `strict` is a real, separate effort.
 - `/admin/results` has no in-app link and no round picker — defaults to
   `?round=1` in the URL. A "latest open/relevant round" default plus a simple
   picker would remove the need to hand-edit the URL.
-- Middleware protects `/api/*` broadly, which means the daily cron request to
-  `/api/cron/sync-fixtures` pays an extra `supabase.auth.getUser()` round trip
-  it doesn't need. Narrowing the matcher would trim that.
-- Cron route's `CRON_SECRET` check doesn't special-case a completely unset env
-  var (`"Bearer undefined"` matches if `CRON_SECRET` is ever missing in prod).
-  Low practical risk, cheap to close.
-- Test coverage gap: no test exercises a mixed-status round beyond `PST`/`AWD`
-  (e.g. `SUSP`, `CANC` combinations), and no test covers an empty fixture list.
-- `src/components/predictions/prediction-form.tsx` uses `'in' operator` type
-  guards where discriminated-union narrowing should suffice — cosmetic, worth
-  a quick cleanup pass.
-- `src/app/leaderboard/page.tsx`'s existing-predictions query result is left
-  untyped (harmless today since only `.length` is read, but inconsistent with
-  the typing used elsewhere in the same file).
+
+<!--
+Done as of 2026-08-02's quick-win pass: dead Google config removed from
+next.config.js; `vercel` moved to devDependencies; middleware matcher now
+skips /api routes; cron route guards against an unset CRON_SECRET;
+prediction-form.tsx's error-toast branch fixed (turned out to be a real
+TypeScript discriminated-union narrowing gap, not an unnecessary guard --
+`!result.success` doesn't narrow reliably, `result.success === false` does);
+predictions/page.tsx's existing-predictions query is now typed;
+gameweek.test.ts covers SUSP/CANC statuses and empty fixture lists;
+cumulative chart tooltip uses initials (the one genuinely space-constrained
+spot -- legend and leaderboard table keep full names).
+-->
