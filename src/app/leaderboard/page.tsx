@@ -1,78 +1,65 @@
-'use client'
+import { createClient } from '@/lib/supabase/server'
+import { getLatestCompletedRound } from '@/lib/predictions/gameweek'
+import { calculatePoints } from '@/lib/predictions/scoring'
+import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
+import { LeaderboardTable, type LeaderboardEntry } from '@/components/leaderboard/leaderboard-table'
 
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
-import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
-import { useEffect, useState } from "react"
-import { LeaderboardEntry } from '@/components/leaderboard/leaderboard-table'
+export default async function LeaderboardPage() {
+  const supabase = createClient()
 
-// Define type for raw data from API
-interface RawLeaderboardData {
-  username: string;
-  rank: string;
-  player: string;
-  total: number | null;
-  gameweekTotal: number | null;
-}
+  const [{ data: profilesData }, { data: fixturesData }, { data: predictionsData }] =
+    await Promise.all([
+      supabase.from('profiles').select('*'),
+      supabase.from('fixtures').select('*'),
+      supabase.from('predictions').select('*'),
+    ])
 
-export default function LeaderboardPage() {
-  const router = useRouter()
-  const [data, setData] = useState<LeaderboardEntry[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
+  const profiles = (profilesData ?? []) as Profile[]
+  const fixtures = (fixturesData ?? []) as FixtureRow[]
+  const predictions = (predictionsData ?? []) as PredictionRow[]
 
-  useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const response = await fetch('/api/leaderboard')
-        const rawData = await response.json() as RawLeaderboardData[]
-        
-        const transformedData: LeaderboardEntry[] = rawData.map((entry) => ({
-          rank: entry.rank,
-          username: entry.username,
-          player: entry.player,
-          total: entry.total ?? 0,
-          gameweekTotal: entry.gameweekTotal ?? 0
-        }))
-        
-        setData(transformedData)
-      } catch (error) {
-        console.error('Error fetching leaderboard:', error)
-        setError('Failed to load leaderboard')
-      } finally {
-        setIsLoading(false)
+  const fixturesById = new Map(fixtures.map((f) => [f.id, f]))
+  const latestRound = getLatestCompletedRound(fixtures)
+
+  const entries: LeaderboardEntry[] = profiles
+    .map((profile) => {
+      const userPredictions = predictions.filter((p) => p.user_id === profile.id)
+
+      let total = 0
+      let gameweekTotal = 0
+
+      for (const prediction of userPredictions) {
+        const fixture = fixturesById.get(prediction.fixture_id)
+        if (!fixture) continue
+
+        const points = calculatePoints(
+          {
+            predictedHomeScore: prediction.predicted_home_score,
+            predictedAwayScore: prediction.predicted_away_score,
+          },
+          { homeScore: fixture.home_score, awayScore: fixture.away_score }
+        )
+
+        total += points
+        if (latestRound !== null && fixture.round === latestRound) {
+          gameweekTotal += points
+        }
       }
-    }
 
-    fetchLeaderboard()
-  }, [])
+      return { player: profile.display_name, total, gameweekTotal }
+    })
+    .sort((a, b) => b.total - a.total)
+    .map((entry, index) => ({
+      rank: String(index + 1),
+      player: entry.player,
+      total: entry.total,
+      gameweekTotal: entry.gameweekTotal,
+    }))
 
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center p-4">
-      <Card className="w-full max-w-[min(90vw,380px)] border-border">
-        <div className="flex flex-col items-center gap-6 p-6">
-          <h1 className="text-2xl font-semibold text-foreground text-center w-full">
-            Leaderboard
-          </h1>
-
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p className="text-destructive">{error}</p>
-          ) : (
-            <LeaderboardTable data={data} />
-          )}
-          
-          <Button 
-            variant="secondary"
-            className="w-full h-11"
-            onClick={() => router.push('/')}
-          >
-            Back
-          </Button>
-        </div>
-      </Card>
-    </main>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-semibold text-foreground mb-4">Leaderboard</h1>
+      <LeaderboardTable data={entries} />
+    </div>
   )
 } 
