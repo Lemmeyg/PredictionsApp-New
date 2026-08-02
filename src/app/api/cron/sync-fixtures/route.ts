@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { fetchFixtures } from '@/lib/api/football'
 import { upsertFixtures } from '@/lib/supabase/fixtures'
 
+// Syncing a full season (~380 fixtures) needs more than the default timeout.
+export const maxDuration = 60
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
 

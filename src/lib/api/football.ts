@@ -37,19 +37,8 @@ const footballApiClient = axios.create({
   }
 });
 
-// Debug API configuration
-console.log('Football API Configuration:', {
-  baseURL: footballApiClient.defaults.baseURL,
-  hasApiKey: !!footballApiClient.defaults.headers['x-rapidapi-key']
-});
-
 export async function fetchFixtures(): Promise<Fixture[]> {
   try {
-    console.log('Fetching fixtures with params:', {
-      league: PREMIER_LEAGUE_ID,
-      season: SEASON,
-    });
-    
     const response = await footballApiClient.get('/fixtures', {
       params: {
         league: PREMIER_LEAGUE_ID,
@@ -57,12 +46,8 @@ export async function fetchFixtures(): Promise<Fixture[]> {
       },
     });
 
-    console.log('Response status:', response.status);
-    console.log('Raw API Response:', JSON.stringify(response.data, null, 2));
-    
     if (!response.data?.response) {
-      console.error('Invalid API Response structure');
-      return [];
+      throw new Error('Invalid API response structure from football API');
     }
 
     const fixtures = response.data.response.map((item) => {
@@ -89,14 +74,13 @@ export async function fetchFixtures(): Promise<Fixture[]> {
       };
     });
 
-    // Debug log to verify round numbers
-    console.log('Sample fixture rounds:', fixtures.slice(0, 3).map(f => f.round));
-    
-    console.log(`Transformed ${fixtures.length} fixtures`);
+    console.log(`Fetched ${fixtures.length} fixtures`);
     return fixtures;
 
   } catch (error: unknown) {
     console.error('Error in fetchFixtures:', error);
-    return [];
+    // Rethrow so a failed sync surfaces as an error to the caller rather than
+    // being silently reported as a successful sync of zero fixtures.
+    throw error;
   }
-} 
+}

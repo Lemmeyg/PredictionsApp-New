@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getLatestCompletedRound } from '@/lib/predictions/gameweek'
+import { FINISHED_STATUSES, getLatestCompletedRound } from '@/lib/predictions/gameweek'
 import { calculatePoints } from '@/lib/predictions/scoring'
 import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
 import { LeaderboardTable, type LeaderboardEntry } from '@/components/leaderboard/leaderboard-table'
@@ -31,6 +31,10 @@ export default async function LeaderboardPage() {
       for (const prediction of userPredictions) {
         const fixture = fixturesById.get(prediction.fixture_id)
         if (!fixture) continue
+
+        // A live match reports real (non-null) scores, so points must only be
+        // counted once the fixture has actually finished.
+        if (!FINISHED_STATUSES.includes(fixture.status)) continue
 
         const points = calculatePoints(
           {

@@ -9,7 +9,27 @@ export async function updateFixtureResult(
 ): Promise<{ success: true } | { success: false; error: string }> {
   const supabase = createClient()
 
-  const { error } = await supabase
+  // Check admin rights here rather than relying on RLS alone: the fixtures
+  // update policy is row-independent, so a denied update returns no error.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { success: false, error: 'Not authorized' }
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile?.is_admin) {
+    return { success: false, error: 'Not authorized' }
+  }
+
+  const { data, error } = await supabase
     .from('fixtures')
     .update({
       home_score: homeScore,
@@ -19,9 +39,15 @@ export async function updateFixtureResult(
       updated_at: new Date().toISOString(),
     })
     .eq('id', fixtureId)
+    .select('id')
 
   if (error) {
     return { success: false, error: error.message }
+  }
+
+  // Zero affected rows means nothing was saved, so don't report success.
+  if (!data || data.length === 0) {
+    return { success: false, error: 'No matching fixture found — it may have been removed.' }
   }
 
   return { success: true }
