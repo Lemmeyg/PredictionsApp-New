@@ -1,6 +1,9 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentRound } from '@/lib/predictions/gameweek'
+import { getCurrentRound, getLatestCompletedRound } from '@/lib/predictions/gameweek'
+import { getRecentForm } from '@/lib/predictions/form'
+import { computeStandings } from '@/lib/predictions/standings'
+import { getOtherPlayersPicks } from '@/lib/predictions/picks'
 import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
 import { PredictionForm } from '@/components/predictions/prediction-form'
 
@@ -14,12 +17,17 @@ export default async function PredictionsPage() {
     redirect('/login')
   }
 
-  const { data: allFixtures } = await supabase
-    .from('fixtures')
-    .select('*')
-    .order('round', { ascending: true })
+  const [{ data: allFixturesData }, { data: profilesData }, { data: allPredictionsData }] =
+    await Promise.all([
+      supabase.from('fixtures').select('*').order('round', { ascending: true }),
+      supabase.from('profiles').select('*'),
+      supabase.from('predictions').select('*'),
+    ])
 
-  const fixtures = (allFixtures ?? []) as FixtureRow[]
+  const fixtures = (allFixturesData ?? []) as FixtureRow[]
+  const profiles = (profilesData ?? []) as Profile[]
+  const allPredictions = (allPredictionsData ?? []) as PredictionRow[]
+
   const currentRound = getCurrentRound(fixtures)
 
   if (currentRound === null) {
@@ -31,23 +39,23 @@ export default async function PredictionsPage() {
   }
 
   const roundFixtures = fixtures.filter((f) => f.round === currentRound)
+  const roundFixtureIds = new Set(roundFixtures.map((f) => f.id))
+  const roundPredictions = allPredictions.filter((p) => roundFixtureIds.has(p.fixture_id))
+  const alreadySubmitted = roundPredictions.some((p) => p.user_id === user.id)
 
-  const { data: existingData } = await supabase
-    .from('predictions')
-    .select('*')
-    .eq('user_id', user.id)
-    .in('fixture_id', roundFixtures.map((f) => f.id))
+  const profile = profiles.find((p) => p.id === user.id) ?? null
 
-  const existing = (existingData ?? []) as PredictionRow[]
-  const alreadySubmitted = existing.length > 0
-
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  const profile = profileData as Profile | null
+  // Rank-relative highlighting for other players' picks: computed once
+  // against the season standings, then applied wherever that player's
+  // initials show up below.
+  const latestCompletedRound = getLatestCompletedRound(fixtures)
+  const standings = computeStandings(profiles, fixtures, allPredictions, latestCompletedRound)
+  const viewerIndex = standings.findIndex((s) => s.profileId === user.id)
+  const aboveProfileId = viewerIndex > 0 ? standings[viewerIndex - 1].profileId : null
+  const belowProfileId =
+    viewerIndex >= 0 && viewerIndex < standings.length - 1
+      ? standings[viewerIndex + 1].profileId
+      : null
 
   return (
     <div className="container mx-auto p-4">
@@ -65,9 +73,22 @@ export default async function PredictionsPage() {
           id: f.id,
           homeTeam: f.home_team,
           awayTeam: f.away_team,
+          homeForm: getRecentForm(f.home_team, fixtures),
+          awayForm: getRecentForm(f.away_team, fixtures),
+          otherPicks: getOtherPlayersPicks(f.id, user.id, roundPredictions, profiles).map(
+            (pick) => ({
+              ...pick,
+              highlight:
+                pick.profileId === aboveProfileId
+                  ? ('above' as const)
+                  : pick.profileId === belowProfileId
+                    ? ('below' as const)
+                    : null,
+            })
+          ),
         }))}
         alreadySubmitted={alreadySubmitted}
       />
     </div>
   )
-} 
+}

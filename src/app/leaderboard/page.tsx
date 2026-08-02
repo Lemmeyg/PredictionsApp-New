@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { FINISHED_STATUSES, getLatestCompletedRound } from '@/lib/predictions/gameweek'
 import { calculatePoints } from '@/lib/predictions/scoring'
+import { computeStandings } from '@/lib/predictions/standings'
 import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
 import { LeaderboardTable, type LeaderboardEntry } from '@/components/leaderboard/leaderboard-table'
 import {
@@ -25,44 +26,17 @@ export default async function LeaderboardPage() {
   const fixturesById = new Map(fixtures.map((f) => [f.id, f]))
   const latestRound = getLatestCompletedRound(fixtures)
 
-  const entries: LeaderboardEntry[] = profiles
-    .map((profile) => {
-      const userPredictions = predictions.filter((p) => p.user_id === profile.id)
-
-      let total = 0
-      let gameweekTotal = 0
-
-      for (const prediction of userPredictions) {
-        const fixture = fixturesById.get(prediction.fixture_id)
-        if (!fixture) continue
-
-        // A live match reports real (non-null) scores, so points must only be
-        // counted once the fixture has actually finished.
-        if (!FINISHED_STATUSES.includes(fixture.status)) continue
-
-        const points = calculatePoints(
-          {
-            predictedHomeScore: prediction.predicted_home_score,
-            predictedAwayScore: prediction.predicted_away_score,
-          },
-          { homeScore: fixture.home_score, awayScore: fixture.away_score }
-        )
-
-        total += points
-        if (latestRound !== null && fixture.round === latestRound) {
-          gameweekTotal += points
-        }
-      }
-
-      return { player: profile.display_name, total, gameweekTotal }
-    })
-    .sort((a, b) => b.total - a.total)
-    .map((entry, index) => ({
-      rank: String(index + 1),
-      player: entry.player,
-      total: entry.total,
-      gameweekTotal: entry.gameweekTotal,
-    }))
+  const entries: LeaderboardEntry[] = computeStandings(
+    profiles,
+    fixtures,
+    predictions,
+    latestRound
+  ).map((entry, index) => ({
+    rank: String(index + 1),
+    player: entry.displayName,
+    total: entry.total,
+    gameweekTotal: entry.gameweekTotal,
+  }))
 
   // Players get a fixed color assignment (alphabetical by name) so a given
   // player's line color never changes as their rank moves week to week --
