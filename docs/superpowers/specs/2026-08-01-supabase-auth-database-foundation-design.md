@@ -114,8 +114,9 @@ stored points drifting out of sync with corrected results.
 - RLS policies:
   - Any authenticated user can **read** all rows in `fixtures` and `predictions`
     (players can see others' picks).
-  - A user can **insert/update** only their own rows in `predictions`
-    (`user_id = auth.uid()`).
+  - A user can **insert** only their own rows in `predictions`
+    (`user_id = auth.uid()`). There is no update or delete policy — a submission
+    is final and cannot be resubmitted or edited.
   - Only rows where the requesting user's `profiles.is_admin = true` can
     **insert/update** `fixtures` (results).
   - This means a bug in a Next.js route cannot let a non-admin overwrite results or

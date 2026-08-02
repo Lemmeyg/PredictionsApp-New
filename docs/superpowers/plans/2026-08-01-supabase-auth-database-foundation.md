@@ -34,7 +34,7 @@ This repo is public on GitHub. `.env.local` (containing a real Google service-ac
 
   These are no longer needed going forward — Phase 1 removes Google Sheets from the active code path entirely — so the safest move is to revoke rather than rotate:
   - In Google Cloud Console → IAM & Admin → Service Accounts → `predictionsapp@predictionsapp-new.iam.gserviceaccount.com` → Keys: delete the existing key(s). Do not generate a replacement.
-  - In Google Cloud Console → APIs & Services → Credentials: delete/revoke the Sheets API key (`AIzaSyATKZC6GFRmM02W5SMqmwydBgCpQ3dpr3Q`).
+  - In Google Cloud Console → APIs & Services → Credentials: delete/revoke the Sheets API key (starts `AIzaSy...`; the full value was in `DraftPRD.md` before it was removed).
 
 - [ ] **Step 2: Rotate the football API key (manual, external)**
 
