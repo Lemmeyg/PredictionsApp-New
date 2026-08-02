@@ -8,14 +8,16 @@
 -- leaderboard and scoring UI continue to compute points live in TypeScript
 -- (src/lib/predictions/scoring.ts). If these stored values and the live
 -- computation ever disagree, that's a signal something is wrong.
+--
+-- Safe to re-run: every statement below is idempotent.
 
 alter table public.predictions
-  add column actual_score text,
-  add column points_awarded integer;
+  add column if not exists actual_score text,
+  add column if not exists points_awarded integer;
 
 -- Recomputes actual_score/points_awarded for every prediction against one
 -- fixture, based on that fixture's current result.
-create function public.sync_prediction_score_and_points(target_fixture_id bigint)
+create or replace function public.sync_prediction_score_and_points(target_fixture_id bigint)
 returns void
 language plpgsql
 security definer set search_path = public
@@ -49,9 +51,8 @@ begin
 end;
 $$;
 
--- Fires whenever a fixture's result changes (API sync or admin override),
--- including the initial insert of a fixture that already has a result.
-create function public.handle_fixture_result_change()
+-- Fires whenever a fixture's result changes (API sync or admin override).
+create or replace function public.handle_fixture_result_change()
 returns trigger
 language plpgsql
 security definer set search_path = public
@@ -62,8 +63,17 @@ begin
 end;
 $$;
 
-create trigger on_fixture_result_changed
-  after insert or update of status, home_score, away_score on public.fixtures
+-- Postgres doesn't allow a WHEN clause to reference OLD on an INSERT
+-- trigger, so insert and update are two separate triggers.
+drop trigger if exists on_fixture_inserted on public.fixtures;
+create trigger on_fixture_inserted
+  after insert on public.fixtures
+  for each row
+  execute procedure public.handle_fixture_result_change();
+
+drop trigger if exists on_fixture_result_updated on public.fixtures;
+create trigger on_fixture_result_updated
+  after update of status, home_score, away_score on public.fixtures
   for each row
   when (
     old.status is distinct from new.status
@@ -75,7 +85,7 @@ create trigger on_fixture_result_changed
 -- Fires when a prediction is submitted, in case its fixture's result is
 -- already known (defensive; the normal flow only allows predicting on
 -- not-yet-started fixtures).
-create function public.handle_prediction_inserted()
+create or replace function public.handle_prediction_inserted()
 returns trigger
 language plpgsql
 security definer set search_path = public
@@ -86,6 +96,7 @@ begin
 end;
 $$;
 
+drop trigger if exists on_prediction_inserted on public.predictions;
 create trigger on_prediction_inserted
   after insert on public.predictions
   for each row execute procedure public.handle_prediction_inserted();
