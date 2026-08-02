@@ -1,0 +1,24 @@
+import { NextResponse } from 'next/server'
+import { fetchFixtures } from '@/lib/api/football'
+import { upsertFixtures } from '@/lib/supabase/fixtures'
+
+export async function GET(request: Request) {
+  const authHeader = request.headers.get('authorization')
+
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const fixtures = await fetchFixtures()
+    await upsertFixtures(fixtures)
+
+    return NextResponse.json({ success: true, count: fixtures.length })
+  } catch (error) {
+    console.error('Fixture sync failed:', error)
+    return NextResponse.json(
+      { success: false, error: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    )
+  }
+}

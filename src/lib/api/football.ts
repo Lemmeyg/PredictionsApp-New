@@ -25,7 +25,7 @@ export interface Fixture {
 
 // Constants
 const PREMIER_LEAGUE_ID = 39;
-const SEASON = 2024;
+const SEASON = Number(process.env.FOOTBALL_API_SEASON ?? '2026');
 const FOOTBALL_API_BASE_URL = 'https://v3.football.api-sports.io';
 
 // Initialize API client
