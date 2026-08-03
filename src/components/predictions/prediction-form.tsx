@@ -9,10 +9,94 @@ import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
 import { submitPredictions } from '@/app/predictions/submit-action'
 
+interface FormEntry {
+  result: 'W' | 'L' | 'D'
+  venue: 'H' | 'A'
+}
+
+interface OtherPick {
+  profileId: string
+  initials: string
+  column: 'home' | 'draw' | 'away'
+  highlight: 'above' | 'below' | null
+}
+
 interface FormFixture {
   id: number
   homeTeam: string
   awayTeam: string
+  homeForm: FormEntry[]
+  awayForm: FormEntry[]
+  otherPicks: OtherPick[]
+}
+
+const FORM_SQUARE_COUNT = 5
+
+function FormSquares({ form }: { form: FormEntry[] }) {
+  const padded: (FormEntry | null)[] = [
+    ...Array(Math.max(0, FORM_SQUARE_COUNT - form.length)).fill(null),
+    ...form,
+  ]
+
+  return (
+    <div className="flex gap-1">
+      {padded.map((entry, index) => (
+        <div
+          key={index}
+          className={cn(
+            'w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-bold text-white',
+            entry === null && 'bg-black border border-gray-700',
+            entry?.result === 'W' && 'bg-green-600',
+            entry?.result === 'L' && 'bg-red-600',
+            entry?.result === 'D' && 'bg-primary'
+          )}
+        >
+          {entry?.venue}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PickBadge({ pick }: { pick: OtherPick }) {
+  return (
+    <span
+      key={pick.profileId}
+      className={cn(
+        'px-1.5 py-0.5 rounded text-xs font-semibold',
+        pick.highlight === 'above' && 'bg-green-600/20 text-green-400 border border-green-600',
+        pick.highlight === 'below' && 'bg-red-600/20 text-red-400 border border-red-600',
+        pick.highlight === null && 'bg-gray-800 text-gray-300'
+      )}
+    >
+      {pick.initials}
+    </span>
+  )
+}
+
+function OtherPicksGrid({ otherPicks }: { otherPicks: OtherPick[] }) {
+  const columns: { key: OtherPick['column']; label: string }[] = [
+    { key: 'home', label: 'Home' },
+    { key: 'draw', label: 'Draw' },
+    { key: 'away', label: 'Away' },
+  ]
+
+  return (
+    <div className="grid grid-cols-3 gap-2 text-center">
+      {columns.map((column) => (
+        <div key={column.key} className="space-y-1">
+          <div className="text-[10px] uppercase text-muted-foreground">{column.label}</div>
+          <div className="flex flex-wrap justify-center gap-1">
+            {otherPicks
+              .filter((pick) => pick.column === column.key)
+              .map((pick) => (
+                <PickBadge key={pick.profileId} pick={pick} />
+              ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export function PredictionForm({
@@ -158,9 +242,18 @@ export function PredictionForm({
             </div>
 
             {isExpanded && (
-              <p className="mt-3 text-sm text-muted-foreground">
-                Match details coming soon
-              </p>
+              <div className="mt-3 space-y-4">
+                <div className="flex items-start">
+                  <div className="w-36 flex justify-end">
+                    <FormSquares form={fixture.homeForm} />
+                  </div>
+                  <div className="flex-1" />
+                  <div className="w-36 flex justify-start">
+                    <FormSquares form={fixture.awayForm} />
+                  </div>
+                </div>
+                <OtherPicksGrid otherPicks={fixture.otherPicks} />
+              </div>
             )}
 
             <div className="flex justify-end mt-2">
