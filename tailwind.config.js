@@ -73,12 +73,17 @@ module.exports = {
           '0%': { transform: `translateX(calc(100% + 1rem))` },
           '100%': { transform: 'translateX(0)' },
         },
+        "spin-x": {
+          from: { transform: 'rotateX(0deg)' },
+          to: { transform: 'rotateX(360deg)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "toast-hide": 'toast-hide 0.2s ease-in forwards',
         "toast-slide-in-right": 'toast-slide-in-right 0.2s ease-out',
+        "spin-x": 'spin-x 5s linear infinite',
       },
     },
   },

@@ -7,6 +7,7 @@ import { computeStandings } from '@/lib/predictions/standings'
 import { getOtherPlayersPicks } from '@/lib/predictions/picks'
 import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
 import { PredictionForm } from '@/components/predictions/prediction-form'
+import { BackToHomeButton } from '@/components/back-to-home-button'
 
 export default async function PredictionsPage() {
   const supabase = createClient()
@@ -34,6 +35,7 @@ export default async function PredictionsPage() {
   if (currentRound === null) {
     return (
       <div className="container mx-auto p-4 text-center text-white">
+        <BackToHomeButton />
         No upcoming round is open for predictions right now.
       </div>
     )
@@ -60,6 +62,7 @@ export default async function PredictionsPage() {
 
   return (
     <div className="container mx-auto p-4">
+      <BackToHomeButton />
       <div className="flex justify-between items-center mb-6">
         <Link href="/" className="text-white hover:text-primary transition-colors">
           {profile?.display_name ?? user.email}

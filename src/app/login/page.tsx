@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { createClient } from '@/lib/supabase/client'
+import { BackToHomeButton } from '@/components/back-to-home-button'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -62,6 +63,7 @@ export default function LoginPage() {
   if (mode === 'forgot') {
     return (
       <main className="min-h-[100dvh] flex items-center justify-center p-4">
+        <BackToHomeButton />
         <Card className="w-full max-w-[min(90vw,380px)] border-border">
           <form
             onSubmit={handleForgotPassword}
@@ -100,6 +102,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-[100dvh] flex items-center justify-center p-4">
+      <BackToHomeButton />
       <Card className="w-full max-w-[min(90vw,380px)] border-border">
         <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6 p-6 w-full">
           <h1 className="text-2xl font-semibold text-foreground">Log In</h1>

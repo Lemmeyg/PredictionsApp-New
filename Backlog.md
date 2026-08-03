@@ -15,6 +15,7 @@
 21. Admin results page needs an in-app link + round picker -- currently only reachable by hand-editing `?round=` in the URL.
 
 Complete
+3. Make the trophy cup logo look like it's spinning on a horizontal axis every 5 seconds (3D rotateX flip, continuous).
 5. visibilty using drop downs into other players scores 
     - a carrot/chevron to the right of each fixture box on the predictions screen; clicking it expands
     - under each team name show 5 colored squares, with either H or A in them. they should represent the teams form with the most resent result to the right. red = loss green = win H= home fixture and A = away. data can be found in the results table. if there are not 5 results to pull from, make the squares black with very thin borders. 
@@ -25,4 +26,4 @@ Complete
 10. store and collect points in the predictions table for admin verification
 12. create 3 weeks of dummy predictions and results so I can see what the app looks like
 13. top scores for the season, ever?, weeks won table, 
-14. on the predictions page, when I click on my name I want to go back to the home page.
+14. Back button (small left-pointing arrow, top-left corner) on every page except the home page, linking back to home.

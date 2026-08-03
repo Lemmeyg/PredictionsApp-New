@@ -13,6 +13,7 @@ import {
   type PlayerSeries,
 } from '@/components/leaderboard/cumulative-score-chart'
 import { TopGameweekScoresTable, WeeksWonTable } from '@/components/leaderboard/stats-tables'
+import { BackToHomeButton } from '@/components/back-to-home-button'
 
 const TOP_SCORES_LIMIT = 5
 
@@ -74,6 +75,7 @@ export default async function LeaderboardPage() {
 
   return (
     <div className="container mx-auto p-4">
+      <BackToHomeButton />
       <h1 className="text-2xl font-semibold text-foreground mb-4">Leaderboard</h1>
       <LeaderboardTable data={entries} />
       <div className="mt-8">

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { FixtureRow, Profile } from '@/lib/supabase/database.types'
 import { ResultsForm } from './results-form'
+import { BackToHomeButton } from '@/components/back-to-home-button'
 
 export default async function AdminResultsPage({
   searchParams,
@@ -41,6 +42,7 @@ export default async function AdminResultsPage({
 
   return (
     <div className="container mx-auto p-4">
+      <BackToHomeButton />
       <h1 className="text-2xl font-semibold text-foreground mb-4">
         Admin: Round {round} Results
       </h1>
