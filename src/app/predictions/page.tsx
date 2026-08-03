@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentRound, getLatestCompletedRound } from '@/lib/predictions/gameweek'
@@ -60,7 +61,9 @@ export default async function PredictionsPage() {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <span className="text-white">{profile?.display_name ?? user.email}</span>
+        <Link href="/" className="text-white hover:text-primary transition-colors">
+          {profile?.display_name ?? user.email}
+        </Link>
       </div>
       <div className="text-center mb-6">
         <h1 className="text-4xl font-bold">
