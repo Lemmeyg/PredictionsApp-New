@@ -32,6 +32,8 @@ export default async function LeaderboardPage() {
   const predictions = (predictionsData ?? []) as PredictionRow[]
 
   const latestRound = getLatestCompletedRound(fixtures)
+  const roundNumbers = latestRound === null ? [] : Array.from({ length: latestRound }, (_, i) => i + 1)
+  const roundScores = computeRoundScores(profiles, fixtures, predictions, roundNumbers)
 
   const entries: LeaderboardEntry[] = computeStandings(
     profiles,
@@ -40,16 +42,20 @@ export default async function LeaderboardPage() {
     latestRound
   ).map((entry, index) => ({
     rank: String(index + 1),
+    profileId: entry.profileId,
     player: entry.displayName,
     total: entry.total,
     gameweekTotal: entry.gameweekTotal,
+    // Most recent round first, for the leaderboard's weekly-scores dropdown.
+    weeklyScores: roundScores
+      .filter((s) => s.profileId === entry.profileId)
+      .map((s) => ({ round: s.round, points: s.points }))
+      .reverse(),
   }))
 
   // Players get a fixed color assignment (alphabetical by name) so a given
   // player's line color never changes as their rank moves week to week --
   // color follows the entity, never its rank.
-  const roundNumbers = latestRound === null ? [] : Array.from({ length: latestRound }, (_, i) => i + 1)
-  const roundScores = computeRoundScores(profiles, fixtures, predictions, roundNumbers)
 
   const playerSeries: PlayerSeries[] = [...profiles]
     .sort((a, b) => a.display_name.localeCompare(b.display_name))

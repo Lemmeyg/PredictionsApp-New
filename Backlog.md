@@ -15,7 +15,8 @@
 21. Admin results page needs an in-app link + round picker -- currently only reachable by hand-editing `?round=` in the URL.
 
 Complete
-3. Make the trophy cup logo look like it's spinning on a horizontal axis every 5 seconds (3D rotateX flip, continuous).
+3. Make the trophy cup logo look like it's spinning on its vertical axis every 5 seconds (3D rotateY spin, continuous).
+22. Leaderboard: chevron per player row expands a dropdown of that player's weekly (per-round) points, most recent round first -- last 5 visible, scrollable to see earlier weeks.
 5. visibilty using drop downs into other players scores 
     - a carrot/chevron to the right of each fixture box on the predictions screen; clicking it expands
     - under each team name show 5 colored squares, with either H or A in them. they should represent the teams form with the most resent result to the right. red = loss green = win H= home fixture and A = away. data can be found in the results table. if there are not 5 results to pull from, make the squares black with very thin borders. 
