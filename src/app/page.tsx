@@ -17,7 +17,7 @@ export default async function HomePage() {
         <div className="flex flex-col items-center gap-6 p-6">
           <div className="animate-in fade-in zoom-in duration-500 transition-transform hover:scale-110">
             <div className="[perspective:1000px]">
-              <div className="bg-primary rounded-full p-4 animate-spin-x">
+              <div className="bg-primary rounded-full p-4 animate-spin-y">
                 <Trophy className="h-8 w-8 text-primary-foreground" />
               </div>
             </div>
