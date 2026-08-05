@@ -200,25 +200,25 @@ export function PredictionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
+    <form onSubmit={handleSubmit} className="max-w-md lg:max-w-2xl mx-auto space-y-4">
       {fixtures.map((fixture, index) => {
         const isExpanded = expandedFixtureId === fixture.id
 
         return (
           <div
             key={fixture.id}
-            className="border border-gray-700 rounded-lg p-4"
+            className="border border-gray-700 rounded-lg p-4 lg:p-6"
           >
             <div className="flex items-center">
-              <div className="w-36 text-right">
+              <div className="w-36 lg:w-48 text-right">
                 <span className="text-white">{fixture.homeTeam}</span>
               </div>
-              <div className="flex items-center gap-2 mx-4">
+              <div className="flex items-center gap-2 lg:gap-3 mx-4 lg:mx-6">
                 <Input
                   ref={(el) => {
                     if (el) inputRefs.current[index * 2] = el
                   }}
-                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  className="w-14 h-14 lg:w-16 lg:h-16 text-center bg-transparent border-gray-600 text-lg lg:text-xl"
                   value={predictions[fixture.id]?.home || ''}
                   onChange={(e) =>
                     handleScoreChange(fixture.id, 'home', e.target.value, index * 2)
@@ -229,14 +229,14 @@ export function PredictionForm({
                   ref={(el) => {
                     if (el) inputRefs.current[index * 2 + 1] = el
                   }}
-                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                  className="w-14 h-14 lg:w-16 lg:h-16 text-center bg-transparent border-gray-600 text-lg lg:text-xl"
                   value={predictions[fixture.id]?.away || ''}
                   onChange={(e) =>
                     handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)
                   }
                 />
               </div>
-              <div className="w-36">
+              <div className="w-36 lg:w-48">
                 <span className="text-white">{fixture.awayTeam}</span>
               </div>
             </div>
@@ -244,11 +244,11 @@ export function PredictionForm({
             {isExpanded && (
               <div className="mt-3 space-y-4">
                 <div className="flex items-start">
-                  <div className="w-36 flex justify-end">
+                  <div className="w-36 lg:w-48 flex justify-end">
                     <FormSquares form={fixture.homeForm} />
                   </div>
                   <div className="flex-1" />
-                  <div className="w-36 flex justify-start">
+                  <div className="w-36 lg:w-48 flex justify-start">
                     <FormSquares form={fixture.awayForm} />
                   </div>
                 </div>
