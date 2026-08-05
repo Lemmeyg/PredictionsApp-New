@@ -31,3 +31,21 @@ export interface PredictionRow {
   actual_score: string | null
   points_awarded: number | null
 }
+
+export interface HofSeasonWinner {
+  id: string
+  competition_name: string
+  season: string
+  winner_name: string
+  final_points: number
+  created_at: string
+}
+
+export interface HofWeeklyHighScore {
+  id: string
+  season: string
+  week_number: number
+  player_name: string
+  score: number
+  created_at: string
+}
