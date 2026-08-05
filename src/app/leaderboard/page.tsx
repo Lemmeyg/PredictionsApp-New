@@ -83,10 +83,12 @@ export default async function LeaderboardPage() {
     <div className="container mx-auto p-4">
       <BackToHomeButton />
       <h1 className="text-2xl font-semibold text-foreground mb-4">Leaderboard</h1>
-      <LeaderboardTable data={entries} />
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Season Progress</h2>
-        <CumulativeScoreChart series={playerSeries} roundNumbers={roundNumbers} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <LeaderboardTable data={entries} />
+        <div>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Season Progress</h2>
+          <CumulativeScoreChart series={playerSeries} roundNumbers={roundNumbers} />
+        </div>
       </div>
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-foreground mb-4">Top Gameweek Scores</h2>
