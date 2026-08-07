@@ -209,7 +209,7 @@ export function PredictionForm({
             key={fixture.id}
             className="border border-gray-700 rounded-lg p-4 lg:p-6"
           >
-            <div className="flex items-center">
+            <div className="flex items-center lg:justify-between">
               <div className="w-36 lg:w-48 text-right">
                 <span className="text-white">{fixture.homeTeam}</span>
               </div>
