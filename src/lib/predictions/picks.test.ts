@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getOtherPlayersPicks } from './picks'
+import { getAllPlayersPicks, getOtherPlayersPicks } from './picks'
 import type { PredictionRow, Profile } from '@/lib/supabase/database.types'
 
 function profile(overrides: Partial<Profile>): Profile {
@@ -75,5 +75,35 @@ describe('getOtherPlayersPicks', () => {
     const predictions = [prediction({ user_id: 'p2', fixture_id: 1 })]
     const picks = getOtherPlayersPicks(1, 'p1', predictions, profilesNoInitials)
     expect(picks[0].initials).toBe('BO')
+  })
+})
+
+describe('getAllPlayersPicks', () => {
+  const profiles = [
+    profile({ id: 'p1', initials: 'AL' }),
+    profile({ id: 'p2', initials: 'BO' }),
+  ]
+
+  it('includes the viewer\'s own pick', () => {
+    const predictions = [prediction({ user_id: 'p1', fixture_id: 1 })]
+    const picks = getAllPlayersPicks(1, predictions, profiles)
+    expect(picks.map((p) => p.profileId)).toEqual(['p1'])
+  })
+
+  it('includes the predicted score alongside each pick', () => {
+    const predictions = [
+      prediction({ user_id: 'p2', fixture_id: 1, predicted_home_score: 3, predicted_away_score: 1 }),
+    ]
+    const picks = getAllPlayersPicks(1, predictions, profiles)
+    expect(picks[0]).toMatchObject({ predictedHomeScore: 3, predictedAwayScore: 1, column: 'home' })
+  })
+
+  it('only includes predictions for the requested fixture', () => {
+    const predictions = [
+      prediction({ user_id: 'p1', fixture_id: 1 }),
+      prediction({ user_id: 'p2', fixture_id: 2 }),
+    ]
+    const picks = getAllPlayersPicks(1, predictions, profiles)
+    expect(picks.map((p) => p.profileId)).toEqual(['p1'])
   })
 })

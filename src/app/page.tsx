@@ -42,6 +42,9 @@ export default async function HomePage() {
                   <Link href="/leaderboard">View Leaderboard</Link>
                 </Button>
                 <Button asChild className="w-full h-11" variant="secondary">
+                  <Link href="/weekly-watcher">Weekly Watcher</Link>
+                </Button>
+                <Button asChild className="w-full h-11" variant="secondary">
                   <Link href="/hof">HOF</Link>
                 </Button>
                 <SignOutButton />
