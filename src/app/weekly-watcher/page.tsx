@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getSubmittedRounds } from '@/lib/predictions/weekly-watcher'
-import { getAllPlayersPicks } from '@/lib/predictions/picks'
+import { sortByKickoff } from '@/lib/predictions/fixture-order'
 import type { FixtureRow, PredictionRow, Profile } from '@/lib/supabase/database.types'
 import { BackToHomeButton } from '@/components/back-to-home-button'
 import { WeekSelect } from '@/components/weekly-watcher/week-select'
-import { WatcherFixtureCard } from '@/components/weekly-watcher/watcher-fixture-card'
+import { WatcherFixtureList } from '@/components/weekly-watcher/watcher-fixture-list'
 
 export default async function WeeklyWatcherPage({
   searchParams,
@@ -41,7 +41,9 @@ export default async function WeeklyWatcherPage({
       : (submittedRounds[0] ?? null)
 
   const roundFixtures =
-    selectedRound === null ? [] : fixtures.filter((f) => f.round === selectedRound)
+    selectedRound === null
+      ? []
+      : sortByKickoff(fixtures.filter((f) => f.round === selectedRound))
 
   return (
     <div className="container mx-auto p-4">
@@ -60,14 +62,11 @@ export default async function WeeklyWatcherPage({
       ) : (
         <div className="max-w-md mx-auto space-y-4">
           <WeekSelect rounds={submittedRounds} selectedRound={selectedRound as number} />
-          {roundFixtures.map((fixture) => (
-            <WatcherFixtureCard
-              key={fixture.id}
-              homeTeam={fixture.home_team}
-              awayTeam={fixture.away_team}
-              picks={getAllPlayersPicks(fixture.id, predictions, profiles)}
-            />
-          ))}
+          <WatcherFixtureList
+            fixtures={roundFixtures}
+            predictions={predictions}
+            profiles={profiles}
+          />
         </div>
       )}
     </div>
