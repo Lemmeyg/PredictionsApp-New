@@ -37,6 +37,24 @@ export function getCurrentRound(fixtures: GameweekFixture[]): number | null {
   return Math.min(...notStartedRounds)
 }
 
+/**
+ * The gameweek currently on show: the highest round with at least one
+ * fixture kicked off. It stays on the last-played round through the gap
+ * until the next round's first kickoff, then advances. Null before the
+ * season's very first fixture starts.
+ */
+export function getActiveRound(fixtures: GameweekFixture[]): number | null {
+  const startedRounds = fixtures
+    .filter((f) => !NOT_STARTED_STATUSES.includes(f.status))
+    .map((f) => f.round)
+
+  if (startedRounds.length === 0) {
+    return null
+  }
+
+  return Math.max(...startedRounds)
+}
+
 export function getLatestCompletedRound(fixtures: GameweekFixture[]): number | null {
   const roundsByNumber = groupByRound(fixtures)
 

@@ -19,7 +19,7 @@ export function computeStandings(
   profiles: Profile[],
   fixtures: FixtureRow[],
   predictions: PredictionRow[],
-  latestCompletedRound: number | null
+  gameweekRound: number | null
 ): StandingsEntry[] {
   const fixturesById = new Map(fixtures.map((f) => [f.id, f]))
 
@@ -45,7 +45,10 @@ export function computeStandings(
         )
 
         total += points
-        if (latestCompletedRound !== null && fixture.round === latestCompletedRound) {
+        // gameweekTotal is a running total for the round on show: only
+        // finished fixtures score, so it grows as that round's matches
+        // complete.
+        if (gameweekRound !== null && fixture.round === gameweekRound) {
           gameweekTotal += points
         }
       }

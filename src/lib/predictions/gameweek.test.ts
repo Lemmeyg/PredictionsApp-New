@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getCurrentRound, getLatestCompletedRound } from './gameweek'
+import { getActiveRound, getCurrentRound, getLatestCompletedRound } from './gameweek'
 
 describe('getCurrentRound', () => {
   it('picks the lowest round where every fixture is not started', () => {
@@ -101,5 +101,49 @@ describe('getLatestCompletedRound', () => {
 
   it('returns null for an empty fixture list', () => {
     expect(getLatestCompletedRound([])).toBeNull()
+  })
+})
+
+describe('getActiveRound', () => {
+  it('picks the highest round that has at least one fixture kicked off', () => {
+    const fixtures = [
+      { round: 1, status: 'FT' },
+      { round: 2, status: 'FT' },
+      { round: 3, status: '1H' },
+      { round: 3, status: 'NS' },
+      { round: 4, status: 'NS' },
+    ]
+    expect(getActiveRound(fixtures)).toBe(3)
+  })
+
+  it('stays on the latest completed round until the next round kicks off', () => {
+    const fixtures = [
+      { round: 1, status: 'FT' },
+      { round: 2, status: 'FT' },
+      { round: 3, status: 'NS' },
+      { round: 3, status: 'NS' },
+    ]
+    expect(getActiveRound(fixtures)).toBe(2)
+  })
+
+  it('does not treat a postponed-only round as active', () => {
+    const fixtures = [
+      { round: 1, status: 'FT' },
+      { round: 2, status: 'NS' },
+      { round: 2, status: 'PST' },
+    ]
+    expect(getActiveRound(fixtures)).toBe(1)
+  })
+
+  it('returns null when no fixture has kicked off yet', () => {
+    const fixtures = [
+      { round: 1, status: 'NS' },
+      { round: 2, status: 'NS' },
+    ]
+    expect(getActiveRound(fixtures)).toBeNull()
+  })
+
+  it('returns null for an empty fixture list', () => {
+    expect(getActiveRound([])).toBeNull()
   })
 })

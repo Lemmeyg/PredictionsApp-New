@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getLatestCompletedRound } from '@/lib/predictions/gameweek'
+import { getActiveRound, getLatestCompletedRound } from '@/lib/predictions/gameweek'
 import { computeStandings } from '@/lib/predictions/standings'
 import {
   computeRoundScores,
@@ -35,11 +35,27 @@ export default async function LeaderboardPage() {
   const roundNumbers = latestRound === null ? [] : Array.from({ length: latestRound }, (_, i) => i + 1)
   const roundScores = computeRoundScores(profiles, fixtures, predictions, roundNumbers)
 
+  // The gameweek on show: the round in progress, or the last one played
+  // during the gap before the next kicks off.
+  const activeRound = getActiveRound(fixtures)
+
+  // The weekly-scores dropdown also shows the active round while it is
+  // still in progress (a partial running total). The season chart, top
+  // scores, and weeks-won stats stay on completed rounds only, so an
+  // unfinished week can't top them.
+  const dropdownRoundScores =
+    activeRound !== null && (latestRound === null || activeRound > latestRound)
+      ? [
+          ...roundScores,
+          ...computeRoundScores(profiles, fixtures, predictions, [activeRound]),
+        ]
+      : roundScores
+
   const entries: LeaderboardEntry[] = computeStandings(
     profiles,
     fixtures,
     predictions,
-    latestRound
+    activeRound
   ).map((entry, index) => ({
     rank: String(index + 1),
     profileId: entry.profileId,
@@ -47,7 +63,7 @@ export default async function LeaderboardPage() {
     total: entry.total,
     gameweekTotal: entry.gameweekTotal,
     // Most recent round first, for the leaderboard's weekly-scores dropdown.
-    weeklyScores: roundScores
+    weeklyScores: dropdownRoundScores
       .filter((s) => s.profileId === entry.profileId)
       .map((s) => ({ round: s.round, points: s.points }))
       .reverse(),
@@ -84,7 +100,7 @@ export default async function LeaderboardPage() {
       <BackToHomeButton />
       <h1 className="text-2xl font-semibold text-foreground mb-4">Leaderboard</h1>
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] gap-8 items-start">
-        <LeaderboardTable data={entries} />
+        <LeaderboardTable data={entries} gameweekRound={activeRound} />
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-4">Season Progress</h2>
           <CumulativeScoreChart series={playerSeries} roundNumbers={roundNumbers} />

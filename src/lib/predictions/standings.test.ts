@@ -59,7 +59,7 @@ describe('computeStandings', () => {
     expect(standings[1].total).toBe(5)
   })
 
-  it('only counts a gameweekTotal for the given latest completed round', () => {
+  it('only counts a gameweekTotal for the given round', () => {
     const profiles = [profile({ id: 'p1' })]
     const fixtures = [
       fixture({ id: 1, round: 1, home_score: 2, away_score: 0 }),
@@ -73,6 +73,23 @@ describe('computeStandings', () => {
     const standings = computeStandings(profiles, fixtures, predictions, 2)
 
     expect(standings[0].total).toBe(16)
+    expect(standings[0].gameweekTotal).toBe(8)
+  })
+
+  it('gives a running gameweekTotal for a partially finished round', () => {
+    const profiles = [profile({ id: 'p1' })]
+    const fixtures = [
+      fixture({ id: 1, round: 3, status: 'FT', home_score: 2, away_score: 0 }),
+      fixture({ id: 2, round: 3, status: '1H', home_score: 0, away_score: 0 }),
+    ]
+    const predictions = [
+      prediction({ id: 'pr1', user_id: 'p1', fixture_id: 1, predicted_home_score: 2, predicted_away_score: 0 }), // finished, exact -> 8
+      prediction({ id: 'pr2', user_id: 'p1', fixture_id: 2, predicted_home_score: 0, predicted_away_score: 0 }), // still live -> no points yet
+    ]
+
+    const standings = computeStandings(profiles, fixtures, predictions, 3)
+
+    expect(standings[0].total).toBe(8)
     expect(standings[0].gameweekTotal).toBe(8)
   })
 
