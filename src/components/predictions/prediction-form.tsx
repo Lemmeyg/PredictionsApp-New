@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
+import { groupByKickoffDay } from '@/lib/predictions/fixture-order'
+import { formatKickoffTime, formatKickoffDayHeading } from '@/lib/format/kickoff'
+import { useDisplayTimeZone } from '@/lib/format/use-display-time-zone'
 import { submitPredictions } from '@/app/predictions/submit-action'
 
 interface FormEntry {
@@ -23,6 +26,7 @@ interface OtherPick {
 
 interface FormFixture {
   id: number
+  kickoffTime: string
   homeTeam: string
   awayTeam: string
   homeForm: FormEntry[]
@@ -113,6 +117,7 @@ export function PredictionForm({
   >({})
   const [expandedFixtureId, setExpandedFixtureId] = useState<number | null>(null)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const timeZone = useDisplayTimeZone()
 
   const toggleExpanded = (fixtureId: number) => {
     setExpandedFixtureId((current) => (current === fixtureId ? null : fixtureId))
@@ -199,79 +204,107 @@ export function PredictionForm({
     router.push('/')
   }
 
+  const dayGroups = groupByKickoffDay(fixtures, (f) => f.kickoffTime, timeZone)
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
-      {fixtures.map((fixture, index) => {
-        const isExpanded = expandedFixtureId === fixture.id
-
-        return (
-          <div
-            key={fixture.id}
-            className="border border-gray-700 rounded-lg p-4"
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6">
+      {dayGroups.map((group) => (
+        <div key={group.dayKey} className="space-y-4">
+          <h2
+            suppressHydrationWarning
+            className="text-sm font-semibold text-muted-foreground"
           >
-            <div className="flex items-center">
-              <div className="w-36 text-right">
-                <span className="text-white">{fixture.homeTeam}</span>
-              </div>
-              <div className="flex items-center gap-2 mx-4">
-                <Input
-                  ref={(el) => {
-                    if (el) inputRefs.current[index * 2] = el
-                  }}
-                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-                  value={predictions[fixture.id]?.home || ''}
-                  onChange={(e) =>
-                    handleScoreChange(fixture.id, 'home', e.target.value, index * 2)
-                  }
-                />
-                <span className="text-gray-400 mx-1">-</span>
-                <Input
-                  ref={(el) => {
-                    if (el) inputRefs.current[index * 2 + 1] = el
-                  }}
-                  className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
-                  value={predictions[fixture.id]?.away || ''}
-                  onChange={(e) =>
-                    handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)
-                  }
-                />
-              </div>
-              <div className="w-36">
-                <span className="text-white">{fixture.awayTeam}</span>
-              </div>
-            </div>
+            {formatKickoffDayHeading(group.headingIso, timeZone)}
+          </h2>
 
-            {isExpanded && (
-              <div className="mt-3 space-y-4">
-                <div className="flex items-start">
-                  <div className="w-36 flex justify-end">
-                    <FormSquares form={fixture.homeForm} />
+          {group.fixtures.map((fixture) => {
+            const index = fixtures.indexOf(fixture)
+            const isExpanded = expandedFixtureId === fixture.id
+
+            return (
+              <div
+                key={fixture.id}
+                className="border border-gray-700 rounded-lg p-4"
+              >
+                <div
+                  suppressHydrationWarning
+                  className="text-xs text-muted-foreground text-center mb-2"
+                >
+                  {formatKickoffTime(fixture.kickoffTime, timeZone)}
+                </div>
+
+                <div className="flex items-center">
+                  <div className="w-36 text-right">
+                    <span className="text-white">{fixture.homeTeam}</span>
                   </div>
-                  <div className="flex-1" />
-                  <div className="w-36 flex justify-start">
-                    <FormSquares form={fixture.awayForm} />
+                  <div className="flex items-center gap-2 mx-4">
+                    <Input
+                      ref={(el) => {
+                        if (el) inputRefs.current[index * 2] = el
+                      }}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                      value={predictions[fixture.id]?.home || ''}
+                      onChange={(e) =>
+                        handleScoreChange(fixture.id, 'home', e.target.value, index * 2)
+                      }
+                    />
+                    <span className="text-gray-400 mx-1">-</span>
+                    <Input
+                      ref={(el) => {
+                        if (el) inputRefs.current[index * 2 + 1] = el
+                      }}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      className="w-14 h-14 text-center bg-transparent border-gray-600 text-lg"
+                      value={predictions[fixture.id]?.away || ''}
+                      onChange={(e) =>
+                        handleScoreChange(fixture.id, 'away', e.target.value, index * 2 + 1)
+                      }
+                    />
+                  </div>
+                  <div className="w-36">
+                    <span className="text-white">{fixture.awayTeam}</span>
                   </div>
                 </div>
-                <OtherPicksGrid otherPicks={fixture.otherPicks} />
-              </div>
-            )}
 
-            <div className="flex justify-end mt-2">
-              <button
-                type="button"
-                onClick={() => toggleExpanded(fixture.id)}
-                aria-expanded={isExpanded}
-                aria-label={isExpanded ? 'Collapse match details' : 'Expand match details'}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <ChevronDown
-                  className={cn('h-5 w-5 transition-transform', isExpanded && 'rotate-180')}
-                />
-              </button>
-            </div>
-          </div>
-        )
-      })}
+                {isExpanded && (
+                  <div className="mt-3 space-y-4">
+                    <div className="flex items-start">
+                      <div className="w-36 flex justify-end">
+                        <FormSquares form={fixture.homeForm} />
+                      </div>
+                      <div className="flex-1" />
+                      <div className="w-36 flex justify-start">
+                        <FormSquares form={fixture.awayForm} />
+                      </div>
+                    </div>
+                    <OtherPicksGrid otherPicks={fixture.otherPicks} />
+                  </div>
+                )}
+
+                <div className="flex justify-end mt-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleExpanded(fixture.id)}
+                    aria-expanded={isExpanded}
+                    aria-label={isExpanded ? 'Collapse match details' : 'Expand match details'}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <ChevronDown
+                      className={cn('h-5 w-5 transition-transform', isExpanded && 'rotate-180')}
+                    />
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ))}
+
       {fixtures.length > 0 && (
         <Button type="submit" className="w-full mt-8" disabled={!isFormComplete()}>
           Submit Predictions
