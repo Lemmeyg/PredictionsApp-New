@@ -30,9 +30,12 @@ export interface LeaderboardEntry {
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[]
+  // The round the "Gameweek" column is totalling, for the header label.
+  // Null before the season's first fixture kicks off.
+  gameweekRound: number | null
 }
 
-export function LeaderboardTable({ data }: LeaderboardTableProps) {
+export function LeaderboardTable({ data, gameweekRound }: LeaderboardTableProps) {
   const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null)
 
   return (
@@ -42,8 +45,10 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
           <TableRow>
             <TableHead className="text-primary">Rank</TableHead>
             <TableHead className="text-primary">Player</TableHead>
+            <TableHead className="text-primary">
+              {gameweekRound === null ? 'Gameweek' : `Gameweek ${gameweekRound}`}
+            </TableHead>
             <TableHead className="text-primary">Total</TableHead>
-            <TableHead className="text-primary">Gameweek</TableHead>
             <TableHead className="text-primary w-8" />
           </TableRow>
         </TableHeader>
@@ -56,8 +61,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 <TableRow>
                   <TableCell>{entry.rank}</TableCell>
                   <TableCell>{entry.player}</TableCell>
-                  <TableCell>{entry.total}</TableCell>
                   <TableCell>{entry.gameweekTotal}</TableCell>
+                  <TableCell>{entry.total}</TableCell>
                   <TableCell>
                     <button
                       type="button"
