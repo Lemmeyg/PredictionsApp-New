@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentRound, getLatestCompletedRound } from '@/lib/predictions/gameweek'
+import { sortByKickoff } from '@/lib/predictions/fixture-order'
 import { getRecentForm } from '@/lib/predictions/form'
 import { computeStandings } from '@/lib/predictions/standings'
 import { getOtherPlayersPicks } from '@/lib/predictions/picks'
@@ -41,7 +42,7 @@ export default async function PredictionsPage() {
     )
   }
 
-  const roundFixtures = fixtures.filter((f) => f.round === currentRound)
+  const roundFixtures = sortByKickoff(fixtures.filter((f) => f.round === currentRound))
   const roundFixtureIds = new Set(roundFixtures.map((f) => f.id))
   const roundPredictions = allPredictions.filter((p) => roundFixtureIds.has(p.fixture_id))
   const alreadySubmitted = roundPredictions.some((p) => p.user_id === user.id)
@@ -77,6 +78,7 @@ export default async function PredictionsPage() {
       <PredictionForm
         fixtures={roundFixtures.map((f) => ({
           id: f.id,
+          kickoffTime: f.kickoff_time,
           homeTeam: f.home_team,
           awayTeam: f.away_team,
           homeForm: getRecentForm(f.home_team, fixtures),

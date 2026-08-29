@@ -1,4 +1,5 @@
 import type { PickColumn } from '@/lib/predictions/picks'
+import { formatKickoffTime } from '@/lib/format/kickoff'
 
 export interface WatcherPick {
   profileId: string
@@ -19,10 +20,14 @@ function PickBadge({ pick }: { pick: WatcherPick }) {
 export function WatcherFixtureCard({
   homeTeam,
   awayTeam,
+  kickoffTime,
+  timeZone,
   picks,
 }: {
   homeTeam: string
   awayTeam: string
+  kickoffTime: string
+  timeZone?: string
   picks: WatcherPick[]
 }) {
   const columns: { key: PickColumn; label: string }[] = [
@@ -33,6 +38,12 @@ export function WatcherFixtureCard({
 
   return (
     <div className="border border-gray-700 rounded-lg p-4">
+      <div
+        suppressHydrationWarning
+        className="text-xs text-muted-foreground text-center mb-2"
+      >
+        {formatKickoffTime(kickoffTime, timeZone)}
+      </div>
       <div className="grid grid-cols-3 gap-2 text-center">
         {columns.map((column) => (
           <div key={column.key} className="space-y-1">
